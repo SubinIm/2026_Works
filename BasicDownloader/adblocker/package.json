@@ -1,0 +1,13 @@
+{
+  "name": "basic-banner-blocker",
+  "version": "0.10.2",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "fixtures": "node fixtures/server.mjs",
+    "filters:update": "node tools/filter-builder/build.mjs",
+    "filters:build": "node tools/filter-builder/build.mjs --offline",
+    "filters:rollback": "node tools/filter-builder/build.mjs --rollback"
+  }
+}

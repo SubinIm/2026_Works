@@ -1,0 +1,21 @@
+# 보안 및 개인정보 처리
+
+- 이 도구는 본인이 접근 권한을 가진 비 DRM 콘텐츠에만 사용해야 한다.
+- Widevine, PlayReady, FairPlay, SAMPLE-AES와 DASH CENC 신호는 best-effort로 차단하며 우회하지 않는다. HLS AES-128 identity key는 일반 스트림 암호화로 취급한다.
+- Cookie 사용은 popup에서 작업마다 명시적으로 선택해야 한다. Cookie는 `storage.local`에 저장하지 않고 해당 작업의 메모리에서만 쓰인다.
+- Authorization은 자동 수집하지 않는다. 기본 전달 범위는 URL, Referer, Origin, User-Agent이다.
+- Cookie/Authorization 및 token/signature/expires/policy 계열 query 값은 로그와 오류에서 가린다. 실제 FFmpeg 입력에는 원본 signed URL을 사용한다.
+- signed URL 원문은 service worker 메모리에만 두고 candidate storage와 popup에는 redacted URL만 기록한다. service worker 재시작으로 원문을 잃으면 페이지에서 다시 탐지해야 한다.
+- 영속 job registry에는 URL, Referer, Cookie, Authorization을 기록하지 않는다.
+- URL은 HTTP(S)만 허용하고 사용자 정보가 포함된 URL을 거부한다.
+- FFmpeg 명령은 인수 배열과 `shell=False`만 사용한다. 확장이 임의 FFmpeg 옵션을 전달할 수 없다.
+- 파일명에서 Windows 제어 문자·경로 구분자를 제거하고 예약 이름을 차단한다. 출력은 지정 download root 아래로 제한한다.
+- extension은 비디오 바이트를 저장하지 않으며 telemetry나 외부 분석 서버가 없다.
+- 제목·poster/대표 이미지 수집은 페이지 DOM의 메타데이터만 사용한다. 인증 query/fragment/사용자 정보가 있는 썸네일 URL은 버리며, 이미지는 anonymous CORS와 no-referrer로 표시한다. 읽을 수 없는 이미지를 위해 Cookie를 추가하거나 원본 영상을 다운로드하지 않는다.
+- 완료 알림은 opt-in이고 제목·파일명·URL을 알림에 넣지 않는다. 우클릭은 관리 화면만 열며 즉시 다운로드하지 않는다.
+- 재생/탐색은 저장된 UUID 작업의 완료된 로컬 미디어 경로만 허용한다. 임의 실행 파일, 사용자 전달 경로, UNC URL은 허용하지 않는다. 원래 출력 폴더 정보를 가진 새 기록은 해당 폴더 안인지 확인한다.
+- `remove_jobs`는 완료·실패·취소·DRM 거부 기록만 제거한다. 실행 중 작업, 영상 파일, partial 파일은 제거하지 않는다. 확장 쪽 tombstone은 지운 기록이 늦은 상태 이벤트로 재등장하는 것을 막는다.
+- 중복 확인은 원본 URL의 digest만 저장하며 실제 URL을 저장하지 않는다. 제목과 로컬 출력 경로는 다운로드 기록에 남는다. 사용자는 목록 정리로 기록을 제거할 수 있다.
+- 0.3.0 YouTube 보조 엔진은 설정에서 별도로 opt-in하며, 기본 비활성화다. 브라우저 Cookie·Authorization·Referer를 전달하지 않는다. HTTPS YouTube 영상 페이지 URL만 허용하고 tracking query를 제거한다. signed media URL은 엔진 내부에서만 사용하며 Host 메시지·기록·로그에 raw extractor JSON을 저장하지 않는다.
+- 보조 엔진은 지정된 로컬 EXE를 실행하므로 신뢰할 수 있는 공식 바이너리만 지정해야 한다. 검증 바이너리는 공식 release의 SHA-256과 대조했다. `--ignore-config`, `--no-plugin-dirs`, `--no-cache-dir` 및 명시한 Node.js 경로를 사용하며, 엔진의 사용자 설정·플러그인·브라우저 쿠키 자동 수집을 사용하지 않는다.
+- 사용자 파일명을 엔진 출력 템플릿으로 전달하지 않는다. UUID별 격리 임시 폴더에서 병합한 뒤 기존 안전한 파일명·출력 경계·partial 정책·FFprobe 검증·원자적 rename을 적용한다. DRM 형식은 거부하며 로그인·PO Token을 자동 보충하거나 우회하지 않는다.

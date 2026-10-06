@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "Personal Stream Downloader",
+  "version": "0.3.0",
+  "minimum_chrome_version": "127",
+  "description": "Detect non-DRM media streams and hand downloads to a local FFmpeg host.",
+  "permissions": ["webRequest", "storage", "tabs", "nativeMessaging", "scripting", "cookies", "sidePanel", "contextMenus", "notifications"],
+  "host_permissions": ["http://*/*", "https://*/*"],
+  "background": { "service_worker": "background/service-worker.js", "type": "module" },
+  "action": { "default_popup": "popup/popup.html", "default_title": "Stream Downloader" },
+  "side_panel": { "default_path": "popup/popup.html?view=sidepanel" },
+  "icons": { "64": "icons/downloader.png", "128": "icons/downloader.png" },
+  "options_page": "options/options.html",
+  "content_scripts": [{
+    "matches": ["http://*/*", "https://*/*"],
+    "js": ["content/media-observer.js"], "run_at": "document_idle", "all_frames": false
+  }]
+}
+

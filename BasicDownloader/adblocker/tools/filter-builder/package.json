@@ -1,0 +1,16 @@
+{
+  "name": "basic-banner-blocker-filter-builder",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Development-only public filter compiler; no library code is loaded remotely by the extension.",
+  "scripts": {
+    "build": "node build.mjs",
+    "build:offline": "node build.mjs --offline",
+    "test": "node --test tests/*.test.mjs"
+  },
+  "devDependencies": {
+    "@adguard/dnr-converter": "2.0.0",
+    "@adguard/re2-wasm": "1.2.0"
+  }
+}

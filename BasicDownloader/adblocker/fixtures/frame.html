@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>프레임 내부 배너 검증</title>
+  <style>
+    :root { font-family: system-ui, sans-serif; color: #203d36; background: #f7faf7; }
+    body { margin: 16px; }
+    h2 { margin: 0 0 8px; font-size: 18px; }
+    p { line-height: 1.5; margin: 8px 0; }
+    #frame-partner-panel { display: flex; gap: 14px; align-items: center; padding: 14px; background: #fff1dc; border: 1px solid #cfb185; border-radius: 8px; }
+    img { width: 75px; height: 64px; border-radius: 5px; }
+    a { color: #795017; }
+    small { color: #506e61; }
+  </style>
+</head>
+<body>
+  <h2>프레임 내부의 정상 제목</h2>
+  <p><small id="frame-label"></small></p>
+  <div id="frame-partner-panel">
+    <a href="#frame-normal-content"><img src="/sample.svg" alt="프레임 내부의 협찬 이미지"></a>
+    <div><strong>프레임 협찬 카드</strong><p><a href="#frame-normal-content">이 링크 또는 이미지를 우클릭해 숨겨보세요.</a></p></div>
+  </div>
+  <p id="frame-normal-content">✅ 프레임 내부의 정상 문장입니다. 협찬 카드만 숨기면 계속 표시되어야 합니다.</p>
+  <script>
+    const label = new URLSearchParams(location.search).get('label') || 'direct';
+    document.getElementById('frame-label').textContent = `호스트: ${location.hostname} / 프레임: ${label}`;
+  </script>
+</body>
+</html>

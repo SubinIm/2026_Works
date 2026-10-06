@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>가벼운 광고 차단</title>
+    <link rel="icon" href="icons/icon-32.png" type="image/png">
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <main>
+      <header class="header">
+        <div class="brand-mark" aria-hidden="true"><span></span></div>
+        <div class="brand-copy">
+          <h1>가벼운 광고 차단</h1>
+          <p id="overall-status">설정을 불러오는 중…</p>
+        </div>
+        <button id="global-toggle" class="switch" type="button" role="switch" aria-checked="false" aria-label="모든 사이트에서 광고 차단" disabled><span></span></button>
+      </header>
+
+      <section class="site-card" aria-labelledby="site-heading">
+        <p class="eyebrow" id="site-heading">현재 사이트</p>
+        <div class="site-row">
+          <div class="site-copy">
+            <h2 id="site-name">확인하는 중…</h2>
+            <p id="site-status">잠시만 기다려 주세요.</p>
+          </div>
+          <button id="site-toggle" class="switch" type="button" role="switch" aria-checked="false" aria-label="현재 사이트에서 광고 차단" disabled><span></span></button>
+        </div>
+        <p class="site-note" id="site-note">사이트 설정은 하위 도메인에도 적용됩니다.</p>
+      </section>
+
+      <section class="diagnostics-card" aria-labelledby="diagnostics-heading" aria-busy="true" id="diagnostics-card">
+        <div class="section-heading">
+          <h2 id="diagnostics-heading">현재 페이지 상태</h2>
+          <button id="refresh-diagnostics" class="text-button" type="button" disabled>상태 다시 확인</button>
+        </div>
+        <dl class="diagnostics-list" aria-live="polite">
+          <div><dt>광고 요청 필터</dt><dd id="network-status">확인 중…</dd></div>
+          <div><dt>페이지 요소 스크립트</dt><dd id="content-status">확인 중…</dd></div>
+          <div><dt>기본 규칙으로 숨김</dt><dd id="auto-hidden-count">확인 중…</dd></div>
+          <div><dt>공개 숨김 필터</dt><dd id="public-cosmetics-status">확인 중…</dd></div>
+          <div><dt>우클릭 메뉴</dt><dd id="menu-status">확인 중…</dd></div>
+        </dl>
+        <p id="diagnostics-note" class="diagnostics-note">숨김 수는 현재 문서의 기본 규칙 기준입니다. 공개 필터의 규칙 수는 차단한 광고 수가 아닙니다.</p>
+      </section>
+
+      <aside class="tip" aria-labelledby="tip-heading">
+        <span class="tip-icon" aria-hidden="true">↗</span>
+        <div>
+          <h2 id="tip-heading">남아 있는 광고 직접 정리하기</h2>
+          <p>우클릭 메뉴나 아래 버튼으로 숨기거나 화면 밖으로 이동할 요소를 선택하세요.</p>
+          <div class="picker-actions">
+            <button id="start-picker" class="picker-button" type="button" disabled>요소 숨기기</button>
+            <button id="start-move-picker" class="picker-button" type="button" disabled>요소 이동시키기</button>
+          </div>
+          <p class="move-note">이동 후에도 빈 자리와 광고 로딩이 남을 수 있습니다. 광고 요청 차단은 별도 설정을 따릅니다.</p>
+        </div>
+      </aside>
+
+      <section class="hidden-section" aria-labelledby="hidden-heading">
+        <div class="section-heading">
+          <h2 id="hidden-heading">숨김·이동 규칙 <span class="count" id="rule-count">—</span></h2>
+          <button id="clear-rules" class="text-button" type="button" disabled>모두 복원</button>
+        </div>
+        <p class="section-note">직접 저장한 규칙 수입니다. 자동 광고 차단 총계가 아닙니다.</p>
+        <div id="clear-confirmation" class="confirmation" hidden>
+          <p>이 사이트에서 직접 숨기거나 이동한 항목을 모두 복원할까요?</p>
+          <div class="confirmation-actions">
+            <button id="cancel-clear" class="small-button" type="button">취소</button>
+            <button id="confirm-clear" class="small-button danger" type="button">모두 복원</button>
+          </div>
+        </div>
+        <ul id="rules-list" class="rules-list" aria-label="현재 사이트에서 직접 숨기거나 이동한 항목"></ul>
+        <p id="empty-rules" class="empty-state">아직 직접 숨기거나 이동한 항목이 없습니다.</p>
+      </section>
+
+      <p id="feedback" class="feedback" role="status" aria-live="polite" aria-atomic="true"></p>
+      <button id="open-options" class="options-button" type="button">규칙 관리 · 백업</button>
+      <button id="open-sidebar" class="options-button" type="button" disabled>사이드바에서 열기</button>
+      <footer>기본·공개 필터 사용 · 영상 광고 차단은 규칙 관리에서 선택</footer>
+    </main>
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>

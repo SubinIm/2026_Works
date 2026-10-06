@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "Basic Banner Blocker",
+  "version": "0.10.2",
+  "minimum_chrome_version": "128",
+  "description": "일반 웹사이트의 광고 요청과 배너를 차단하고, 우클릭한 요소를 사이트별로 숨기거나 화면 밖으로 이동시킵니다.",
+  "permissions": ["storage", "contextMenus", "declarativeNetRequest", "sidePanel", "scripting"],
+  "host_permissions": ["http://*/*", "https://*/*"],
+  "background": { "service_worker": "background.js", "type": "module" },
+  "icons": { "16": "icons/icon-16.png", "32": "icons/icon-32.png", "48": "icons/icon-48.png", "128": "icons/icon-128.png" },
+  "action": { "default_popup": "popup.html", "default_title": "Basic Banner Blocker", "default_icon": { "16": "icons/icon-16.png", "32": "icons/icon-32.png" } },
+  "side_panel": { "default_path": "sidepanel.html" },
+  "options_ui": { "page": "options.html", "open_in_tab": true },
+  "declarative_net_request": {
+    "rule_resources": [
+      { "id": "banner_ads", "enabled": true, "path": "rules/banner-ads.json" },
+      { "id": "public_ads", "enabled": false, "path": "rules/public-ads.json" }
+    ]
+  },
+  "content_scripts": [{
+    "matches": ["http://*/*", "https://*/*"],
+    "js": ["cosmetic-filters.js", "content.js"],
+    "run_at": "document_start",
+    "all_frames": true,
+    "match_about_blank": true,
+    "match_origin_as_fallback": true
+  }]
+}

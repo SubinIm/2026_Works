@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><title>0.2.8 첫 클릭 다운로드 검증</title><script src="vendor/hls.min.js"></script></head>
+<body>
+<h1>첫 클릭 후보 선택 검증</h1>
+<p>무음 HLS와 영상+음성 HLS를 각각 재생합니다. 확장에서 무음 후보의 Download를 한 번 눌러 음성 포함 후보가 선택되는지 확인합니다.</p>
+<video id="silent" controls muted width="320"></video>
+<video id="av" controls muted width="320"></video>
+<script>
+const run = new URL(location.href).searchParams.get('run') || '028';
+for (const [id, file] of [['silent', 'separate-video.m3u8'], ['av', 'separate-av.m3u8']]) {
+  const player = new Hls();
+  player.loadSource('../generated/' + file + '?acceptance=' + encodeURIComponent(run));
+  player.attachMedia(document.getElementById(id));
+  player.on(Hls.Events.MANIFEST_PARSED, () => document.getElementById(id).play());
+}
+</script>
+</body></html>

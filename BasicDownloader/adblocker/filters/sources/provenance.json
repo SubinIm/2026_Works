@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "sources": [
+    {
+      "id": 1,
+      "key": "easylist",
+      "name": "EasyList",
+      "file": "easylist.txt",
+      "url": "https://easylist.to/easylist/easylist.txt",
+      "homepage": "https://easylist.to/",
+      "license": "GPL-3.0-or-later (selected from dual license)",
+      "licenseUrl": "https://easylist.to/pages/licence.html",
+      "attribution": "The EasyList authors (https://easylist.to/)",
+      "fetchedAt": "2026-10-04T19:20:05.752Z",
+      "sha256": "916d1c899bd308298402ba8f14abca2c44a90144a44053b0558f1755f4195875",
+      "sourceVersion": "202610041909",
+      "packageVersion": null,
+      "bytes": 2091647,
+      "lines": 79512,
+      "activeLines": 79235
+    },
+    {
+      "id": 2,
+      "key": "korean-classic",
+      "name": "filterslists-KO Classic for AdGuard",
+      "file": "korean-classic.txt",
+      "registryUrl": "https://registry.npmjs.org/@filteringdev%2ffilterslists-ko/latest",
+      "homepage": "https://github.com/FilteringDev/filterslists-KO",
+      "license": "GPL-3.0-only",
+      "licenseUrl": "https://github.com/FilteringDev/filterslists-KO/blob/master/LICENSE",
+      "attribution": "FilteringDev/filterslists-KO contributors; derived from List-KR",
+      "url": "https://cdn.jsdelivr.net/npm/@filteringdev/filterslists-ko@2026.20729.2/dist/filterslist-AdGuard-classic.txt",
+      "fetchedAt": "2026-10-04T19:20:05.654Z",
+      "sha256": "e3aac1fb7e92a4451d739bdb231772ef490ffbf8d163e8985f8d83b64c990b20",
+      "sourceVersion": "2026.20728.0",
+      "packageVersion": "2026.20729.2",
+      "bytes": 282330,
+      "lines": 5069,
+      "activeLines": 4281
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+:root{font:13px system-ui;color:#e8eef7;background:#10151d;color-scheme:dark}*{box-sizing:border-box}body{margin:0;width:480px;max-width:100vw}.sidepanel{width:auto;min-width:250px}header,.toolbar{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:12px;border-bottom:1px solid #293344}header{align-items:flex-start;flex-direction:column}#health{font-size:11px;color:#9db2cc}#page{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}.view-toolbar{padding:8px 12px;display:flex;gap:6px;flex-wrap:wrap;align-items:center}.view-toolbar label{margin-left:auto}main,.jobs{padding:10px}.jobs{max-height:320px;overflow:auto}.sidepanel .jobs{max-height:45vh}.download-manager{border-top:1px solid #293344;border-bottom:1px solid #293344}.section-toggle{width:100%;border:0;border-radius:0;text-align:left;padding:11px 12px;background:#172130}.jobs-toolbar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:8px 10px}.records-note{margin:0 10px;font-size:11px;color:#9db2cc}#manager-message{margin:6px 10px;white-space:pre-line}.job{padding:10px;margin-bottom:7px;border-left:3px solid #67c6ff;background:#18202c;border-radius:5px}.job-header{display:flex;align-items:center;gap:7px}.job-header .job-title{flex:1;overflow-wrap:anywhere;font-weight:600}.job small{display:block;color:#9db2cc;overflow-wrap:anywhere;margin:6px 0}.job progress{width:100%;margin-top:8px;accent-color:#67c6ff;cursor:default;pointer-events:none}.job-details{margin-top:5px}.job-details summary{cursor:pointer;color:#9db2cc}.job-technical{white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px;max-height:160px;overflow:auto}.job-actions{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}.job-actions button{font-size:11px}.job-select-label{margin:0}.job-select-label span{position:absolute;clip-path:inset(50%);width:1px;height:1px;overflow:hidden}.job .job-menu-button{padding:4px 8px}.job-thumb{width:44px;height:30px;object-fit:cover;border-radius:3px}article{padding:10px;margin-bottom:9px;border:1px solid #303c50;border-radius:8px;background:#18202c}.candidate-heading{display:flex;gap:10px;align-items:center;margin-bottom:8px}.thumbnail-wrap{width:96px;height:58px;flex:none;position:relative;background:#243248;border-radius:5px;overflow:hidden}.thumbnail{width:100%;height:100%;object-fit:cover}.thumbnail-fallback{position:absolute;inset:0;display:grid;place-items:center;font-size:24px;color:#91a4bd}.candidate-heading-text{min-width:0}.media-title{font-size:13px;line-height:1.45;margin:0 0 5px;overflow-wrap:anywhere}.thumbnail-source{color:#9db2cc;font-size:10px}.media-badges{font-size:11px;line-height:1.5;color:#b8ddc7}.badges,.actions{display:flex;gap:7px;align-items:center;flex-wrap:wrap}.kind{color:#67c6ff;text-transform:uppercase}.score{margin-left:auto}.flags{color:#ffbd66}.host{font-weight:600;margin:6px 0}.url{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#a8bdd4}.seen,label{display:block;margin:7px 0;color:#9db2cc}.notice,.duplicate-warning{white-space:pre-line;padding:8px;border-left:3px solid #ffbd66;background:#302719;color:#ffd89c}.duplicate-warning button{margin:3px}.message{color:#d7e7f8;white-space:pre-line}.message.error,#manager-message.error{color:#ff9d9d}.message.warning,.job .warning{color:#ffd89c}button,select,input{background:#243248;color:#eef;border:1px solid #43536c;border-radius:5px;padding:5px 8px;font:inherit}button{cursor:pointer}button:hover{background:#334765}button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid #67c6ff;outline-offset:2px}button:disabled,input:disabled{opacity:.45;cursor:not-allowed}.options{display:grid;grid-template-columns:minmax(90px,1fr) auto auto auto;gap:5px;margin-top:8px}.filename{min-width:0}.auto-title-option,.video-only-option{grid-column:1/-1;margin:3px 0}.hidden{display:none!important}.technical{margin-top:8px;color:#9db2cc}.technical summary{cursor:pointer}.result{white-space:pre-wrap;max-height:170px;overflow:auto;color:#b9d7a8}.empty{text-align:center;color:#9db2cc;padding:20px}.progress-metrics{line-height:1.6;margin:6px 0;color:#d7e7f8}.progress-note{font-size:12px;line-height:1.5;margin:6px 0;color:#9db2cc}.candidate-group{display:block;width:100%;text-align:left;margin:8px 0;padding:9px;color:#bad9f2}.group-explanation{font-size:11px;color:#9db2cc;margin:0 0 8px}.context-menu{position:fixed;z-index:10;min-width:175px;background:#1c293d;border:1px solid #7086a5;border-radius:7px;padding:5px;box-shadow:0 5px 20px #0009}.context-menu button{display:block;width:100%;text-align:left;border:0;background:transparent;padding:8px}.context-menu button:hover,.context-menu button:focus{background:#334765}.context-menu-title{display:block;padding:5px 8px;font-size:11px;color:#9db2cc}@media(max-width:380px){.options{grid-template-columns:1fr 1fr}.filename{grid-column:1/-1}.toolbar{flex-wrap:wrap}#page{flex-basis:100%}.thumbnail-wrap{width:72px;height:45px}.job-actions button{flex:1}}
+:root .job-thumb-placeholder{display:grid;place-items:center;flex:none;width:34px;height:30px;border-radius:3px;background:#243248;color:#91a4bd}
+
+/* Chrome sizes action popups from their document. Do not constrain this width
+   to the initial viewport (100vw), which can keep the popup stuck narrow. */
+html:not(.sidepanel) {
+  width: 720px;
+  min-width: 720px;
+  height: 600px;
+  overflow: hidden;
+}
+body:not(.sidepanel) {
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+/* The same document also serves the resizable side panel. */
+html.sidepanel {
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+}
+body.sidepanel {
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  overflow-x: hidden;
+}
+button { white-space: nowrap; flex-shrink: 0; }
+.job-header .job-title { min-width: 0; }
+.job-header { flex-wrap: wrap; }
+.job-header .job-title { flex-basis: 100px; }
+.toolbar #page { min-width: 0; }
+.job-actions button { flex: 0 0 auto; }
+.session-help { color: #9db2cc; font-size: 11px; line-height: 1.5; }
+article.recommended { border-color: #67c6ff; }
+
+/* Descriptions stay available on hover, keyboard focus, and a pinned click. */
+.option-row { display:flex; align-items:center; gap:6px; position:relative; margin:5px 0; }
+.option-row label { margin:0; color:#b8c9dd; }
+.view-toolbar .option-row label { margin-left:0; }
+.search-toolbar { gap:8px 16px; }
+.help-wrap { display:inline-flex; position:relative; margin-left:auto; }
+.help-trigger { width:22px; height:22px; padding:0; border-radius:50%; color:#9db2cc; background:transparent; font-size:11px; }
+.help-tip { display:none; pointer-events:none; position:absolute; right:0; top:calc(100% + 6px); z-index:30; width:300px; max-width:calc(100vw - 48px); padding:10px 12px; margin:0; background:#101925; border:1px solid #647c99; border-radius:7px; color:#d7e7f8; font-size:12px; line-height:1.6; white-space:normal; box-shadow:0 5px 18px #0009; }
+.option-row:hover .help-tip,.help-wrap:focus-within .help-tip,.help-wrap.help-pinned .help-tip { display:block; }
+.help-wrap.help-dismissed .help-tip { display:none; }
+#find-av-status:empty { display:none; }
+#find-av-status { flex-basis:100%; font-size:11px; color:#9db2cc; }
+.compact-notice { margin:6px 10px; border-left:2px solid #ffbd66; padding:7px 9px; background:#29251d; border-radius:4px; }
+.compact-notice summary { cursor:pointer; color:#ffd89c; font-size:12px; }
+.compact-notice .records-note { margin:8px 0 0; line-height:1.6; }
+.notice-container { margin:8px 0; }
+.notice-container .notice { background:transparent; border:0; padding:0; margin:8px 0 0; font-size:12px; }
+.source-details { margin:7px 0; font-size:11px; color:#9db2cc; }
+.source-details summary { cursor:pointer; }
+.source-details .score { display:block; margin:6px 0; }
+.source-details .url { white-space:normal; overflow-wrap:anywhere; }
+@media(max-width:380px) { .search-toolbar .option-row { flex-basis:100%; } }
+.youtube-panel { margin:10px; padding:12px; border:1px solid #67c6ff; border-radius:8px; background:#18202c; }
+.youtube-panel h2 { margin:0 0 8px; font-size:14px; }
+.youtube-panel details { color:#9db2cc; font-size:11px; }
+.youtube-options { display:flex; flex-wrap:wrap; gap:8px; }
+.youtube-options label:first-child { flex:1 1 180px; }
+.youtube-options input { width:100%; min-width:0; }
+.youtube-panel #youtube-status { font-size:12px; line-height:1.5; white-space:pre-line; }

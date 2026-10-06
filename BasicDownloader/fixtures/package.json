@@ -1,0 +1,10 @@
+{
+  "name": "personal-stream-downloader-fixtures",
+  "private": true,
+  "type": "module",
+  "scripts": { "build-player": "node build-player.mjs" },
+  "dependencies": {
+    "dashjs": "5.0.3",
+    "hls.js": "1.6.13"
+  }
+}

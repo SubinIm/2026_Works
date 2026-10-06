@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>규칙 관리 · 가벼운 광고 차단</title>
+    <link rel="icon" href="icons/icon-32.png" type="image/png">
+    <link rel="stylesheet" href="options.css">
+  </head>
+  <body>
+    <main>
+      <header class="page-header">
+        <div>
+          <p class="eyebrow">가벼운 광고 차단</p>
+          <h1>규칙 관리</h1>
+          <p class="intro">직접 숨기거나 이동한 항목과 광고 요청 규칙을 한곳에서 관리하세요.</p>
+        </div>
+        <span id="global-status" class="status-pill">불러오는 중…</span>
+      </header>
+
+      <nav class="section-nav" aria-label="설정 영역">
+        <a href="#public-heading">공개 필터</a>
+        <a href="#privacy-heading">추적 차단</a>
+        <a href="#advanced-heading">영상·지문 보호</a>
+        <a href="#privacy-api-heading">광고 API · GPC</a>
+        <a href="#cosmetic-heading">숨김·이동 규칙</a>
+        <a href="#network-heading">요청 차단</a>
+        <a href="#sites-heading">사이트 예외</a>
+        <a href="#backup-heading">백업</a>
+      </nav>
+
+      <p id="feedback" class="feedback" role="status" aria-live="polite" aria-atomic="true"></p>
+      <div class="toolbar">
+        <label class="search-label" for="rule-search">규칙 검색</label>
+        <input id="rule-search" type="search" placeholder="사이트, 이름, 선택자 또는 광고 도메인" autocomplete="off">
+        <button id="refresh-state" type="button" class="quiet" disabled>다시 불러오기</button>
+      </div>
+
+      <section class="card" aria-labelledby="public-heading">
+        <div class="section-heading public-heading">
+          <h2 id="public-heading">공개 광고 필터</h2>
+          <label class="public-toggle"><input id="public-filter-toggle" type="checkbox" role="switch" disabled> 공개 필터 사용</label>
+        </div>
+        <p class="section-note">EasyList와 한국어 필터의 지원되는 광고 요청·요소 숨김 규칙을 함께 적용합니다. 전체 차단과 사이트별 차단 설정을 따릅니다.</p>
+        <p id="public-filter-status" class="filter-status" role="status" aria-live="polite">적용 상태를 확인하는 중입니다.</p>
+        <p id="public-filter-error" class="filter-error" hidden></p>
+        <dl class="filter-metadata">
+          <div><dt>포함된 버전</dt><dd id="public-filter-version">—</dd></div>
+          <div><dt>배포 파일 생성</dt><dd id="public-filter-updated">—</dd></div>
+          <div><dt>요청 규칙</dt><dd id="public-network-count">—</dd></div>
+          <div><dt>요소 숨김 규칙</dt><dd id="public-cosmetic-count">—</dd></div>
+        </dl>
+        <ul id="public-filter-sources" class="filter-sources" aria-label="공개 필터 출처"></ul>
+        <p class="field-note">공개 목록 전체와 동일하게 동작하지는 않습니다. 지원되는 일반 요청·요소 숨김 문법만 포함하며, 고급 스크립트 처리와 동영상 내 광고는 다루지 않습니다.</p>
+        <p class="field-note">현재는 확장에 포함된 고정 배포본을 사용합니다. 자동으로 갱신하지 않으며, 새 목록은 로컬에서 다시 빌드하고 확장·웹페이지를 새로고침해야 적용됩니다. 공개 필터를 꺼도 직접 저장한 규칙과 자체 보완 필터는 유지됩니다.</p>
+      </section>
+
+      <section class="card" aria-labelledby="privacy-heading">
+        <h2 id="privacy-heading">추적 차단 강화</h2>
+        <p class="section-note">선택한 서비스의 로딩과 수집 요청을 차단합니다. 전체·사이트 일시 중지가 우선합니다. 변경 후 웹페이지를 새로고침하세요.</p>
+        <p><label class="public-toggle"><input id="tracking-protection-toggle" type="checkbox" role="switch" disabled> 분석·추적 차단</label></p>
+        <p class="section-note">Google Analytics, Hotjar, Clarity, Matomo와 주요 SNS 픽셀·분석 서비스, 알려진 지문 수집 스크립트를 차단합니다. Google Tag Manager의 일반 컨테이너는 차단하지 않습니다.</p>
+        <p class="section-note">사이트 자체 수집 주소에도 일부 적용됩니다. 로그인·결제 등 정상 기능에 문제가 생기면 현재 사이트 차단을 일시 중지하고 새로고침하세요.</p>
+        <p><label class="public-toggle"><input id="error-monitoring-toggle" type="checkbox" role="switch" disabled> 오류 수집 차단</label></p>
+        <p class="section-note">Sentry·Bugsnag. 사이트의 오류 진단 전송도 중단됩니다. 문제가 생기면 해당 설정을 끌 수 있습니다. 광고를 화면 밖으로 이동하는 기능은 유지됩니다.</p>
+      </section>
+      <section class="card" aria-labelledby="advanced-heading">
+        <h2 id="advanced-heading">영상 광고 · 지문 보호</h2>
+        <p><label class="public-toggle"><input id="youtube-ad-toggle" type="checkbox" role="switch" disabled> YouTube 영상 광고 차단 (실험)</label></p>
+        <p class="section-note">YouTube 페이지의 초기·추가 재생 데이터에서 광고 정보를 제거하고, 광고 재생 중 표시되는 건너뛰기 버튼을 자동으로 누릅니다. Shorts 광고 항목도 처리합니다. 연속 재생에 광고 정보가 필요한 방식에서는 데이터를 보존하고 자동 건너뛰기만 사용하므로 광고가 남을 수 있습니다. 서버에서 본 영상과 합쳐 보내는 광고·삽입 프레임·모든 계정별 동작은 보장하지 않습니다. 재생에 문제가 생기면 끄고 새로고침하세요.</p>
+        <p><label class="public-toggle"><input id="video-ad-toggle" type="checkbox" role="switch" disabled> 영상 광고 요청 차단</label></p>
+        <p class="section-note">Google IMA 광고 SDK와 일부 VAST 요청을 차단합니다. YouTube의 재생을 보호하기 위해 해당 사이트는 이 요청 차단에서 제외하며 위의 전용 옵션으로 처리합니다. 광고 SDK에 의존하는 다른 플레이어는 본 영상도 재생되지 않을 수 있으므로 이 설정을 끄거나 해당 사이트 차단을 일시 중지하고 새로고침하세요.</p>
+        <p><label class="public-toggle"><input id="fingerprint-toggle" type="checkbox" role="switch" disabled> Canvas·오디오 지문 보호</label></p>
+        <p class="section-note">최상위 페이지의 캔버스 읽기·내보내기와 오디오 샘플에 미세 변화를 추가합니다. 그래픽·음원 편집 결과에 영향을 줄 수 있습니다. 보호 값을 새 페이지마다 바꾸며, 삽입 프레임·Worker는 보호 범위에 포함되지 않습니다.</p>
+        <p class="section-note">각 기능은 기본적으로 꺼져 있으며 독립적으로 적용됩니다. 전체·사이트 일시 중지가 우선합니다. 켜거나 끈 뒤에는 웹페이지를 새로고침해야 완전히 반영됩니다.</p>
+      </section>
+      <section class="card" aria-labelledby="privacy-api-heading">
+        <h2 id="privacy-api-heading">광고 API · 개인정보 거부 신호</h2>
+        <p><label class="public-toggle"><input id="sandbox-toggle" type="checkbox" role="switch" disabled> Privacy Sandbox 광고 API 제한</label></p>
+        <p class="section-note">광고·Private State Token API 노출을 줄이고 문서 응답에 제한 정책을 더합니다. Chrome의 전역 개인정보 설정은 바꾸지 않습니다. 토큰 기반 인증 등 일부 기능에 영향을 줄 수 있습니다. 삽입 프레임의 API 노출은 그대로일 수 있으며, 정책은 브라우저가 지원하는 기능에 적용됩니다.</p>
+        <p><label class="public-toggle"><input id="gpc-toggle" type="checkbox" role="switch" disabled> 개인정보 판매·공유 거부 신호 보내기 (GPC)</label></p>
+        <p class="section-note">HTTP 요청에 Sec-GPC: 1을 보내고 최상위 페이지에 navigator.globalPrivacyControl=true를 제공합니다. 서버가 신호를 따르는지는 별개이며 광고·쿠키·동의 창을 자동으로 차단하지 않습니다. 삽입 프레임·Worker의 JS 속성은 변경하지 않습니다.</p>
+        <p class="section-note">각각 기본값은 꺼짐입니다. 전체·사이트 일시 중지가 우선하며 켜거나 끈 뒤에는 웹페이지를 새로고침하세요.</p>
+      </section>
+      <section class="card" aria-labelledby="cosmetic-heading">
+        <div class="section-heading">
+          <h2 id="cosmetic-heading">직접 숨기거나 이동한 항목</h2>
+          <span id="cosmetic-count" class="count">—</span>
+        </div>
+        <p class="section-note">숨김은 요소를 감추고 자리를 접습니다. 이동은 요소를 화면 밖으로 옮기며, 빈 자리와 광고 로딩이 남을 수 있습니다. 광고 요청 차단은 별도 설정을 따르며, 이동해도 사이트에 따라 광고 차단 안내가 표시될 수 있습니다.</p>
+        <ul id="cosmetic-list" class="rules-list" aria-label="직접 숨기거나 이동한 항목 목록"></ul>
+        <p id="cosmetic-empty" class="empty-state">설정을 불러오는 중입니다.</p>
+      </section>
+
+      <section class="card" aria-labelledby="network-heading">
+        <div class="section-heading">
+          <h2 id="network-heading">광고 요청 차단</h2>
+          <span id="network-count" class="count">—</span>
+        </div>
+        <p class="section-note">입력한 광고 도메인과 하위 도메인으로 향하는 외부 배너 관련 요청을 차단합니다. 페이지 이동과 동영상·오디오 요청은 제외합니다.</p>
+        <form id="network-form">
+          <fieldset id="network-fields" disabled>
+            <legend class="sr-only">광고 요청 규칙 추가</legend>
+            <div class="form-grid">
+              <label>광고 서버 도메인 <span class="required">필수</span>
+                <input id="network-domain" type="text" placeholder="ads.example.com" maxlength="253" required autocomplete="off" spellcheck="false">
+              </label>
+              <label>요청을 보낸 사이트 <span class="optional">선택</span>
+                <input id="network-site" type="text" placeholder="비워 두면 모든 사이트" maxlength="253" autocomplete="off" spellcheck="false">
+              </label>
+              <button id="add-network" type="submit" class="primary">규칙 추가</button>
+            </div>
+          </fieldset>
+          <p class="field-note">https://나 경로 없이 도메인만 입력하세요. 선택한 사이트와 하위 도메인이 직접 보낸 요청에 적용됩니다. 다른 도메인의 삽입 프레임에서 보낸 요청은 적용되지 않을 수 있습니다.</p>
+        </form>
+        <ul id="network-list" class="rules-list" aria-label="사용자 광고 요청 규칙 목록"></ul>
+        <p id="network-empty" class="empty-state">설정을 불러오는 중입니다.</p>
+        <p class="footnote">추가·변경 후 웹페이지를 새로고침하세요. 내장 기본 필터는 이 목록에 포함되지 않습니다.</p>
+      </section>
+
+      <section class="card" aria-labelledby="sites-heading">
+        <div class="section-heading">
+          <h2 id="sites-heading">차단을 쉬는 사이트</h2>
+          <span id="sites-count" class="count">—</span>
+        </div>
+        <p class="section-note">이 사이트와 하위 도메인에서는 광고 차단을 일시 중지합니다. 새 예외는 해당 사이트의 확장 팝업에서 설정하세요.</p>
+        <ul id="sites-list" class="rules-list" aria-label="차단을 일시 중지한 사이트"></ul>
+        <p id="sites-empty" class="empty-state">설정을 불러오는 중입니다.</p>
+      </section>
+
+      <section class="card" aria-labelledby="backup-heading">
+        <div class="section-heading"><h2 id="backup-heading">백업 및 가져오기</h2></div>
+        <p class="section-note">숨김·이동 규칙, 요청 규칙, 사이트 예외를 JSON 파일로 보관하세요. 백업에는 규칙을 만든 사이트 주소와 요소 선택자가 포함됩니다.</p>
+        <div class="backup-actions">
+          <button id="export-backup" type="button" class="primary" disabled>백업 다운로드</button>
+          <label class="file-label" for="import-file">백업 파일 선택</label>
+          <input id="import-file" type="file" accept=".json,application/json" disabled>
+        </div>
+        <p id="import-size-note" class="field-note"></p>
+        <div id="import-preview" class="import-preview" hidden>
+          <h3>가져올 내용 확인</h3>
+          <p id="import-filename" class="filename"></p>
+          <dl class="preview-grid">
+            <div><dt>추가할 숨김·이동 규칙</dt><dd id="import-custom-count">0개</dd></div>
+            <div><dt>추가할 요청 규칙</dt><dd id="import-network-count">0개</dd></div>
+            <div><dt>추가할 사이트 예외</dt><dd id="import-sites-count">0개</dd></div>
+          </dl>
+          <p id="import-duplicates" class="field-note"></p>
+          <p class="field-note">기존 항목과 중복되면 현재 설정을 유지합니다. 기존 규칙을 삭제하거나 전체 차단 켜짐·꺼짐 설정을 바꾸지 않습니다. 새 사이트 예외는 해당 사이트의 차단을 일시 중지합니다.</p>
+          <div class="preview-actions">
+            <button id="apply-import" type="button" class="primary" disabled>확인한 내용 가져오기</button>
+            <button id="cancel-import" type="button" class="quiet" disabled>취소</button>
+          </div>
+        </div>
+      </section>
+      <footer>웹 광고 차단 · 선택형 영상 광고·지문 보호 · 규칙과 백업은 이 기기에서 처리</footer>
+    </main>
+    <script type="module" src="options.js"></script>
+  </body>
+</html>

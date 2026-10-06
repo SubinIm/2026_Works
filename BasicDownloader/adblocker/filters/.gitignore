@@ -1,0 +1,5 @@
+.pending-backup/
+.pending-build.json
+.build.lock
+.rollback/
+*.filter-build-*.tmp

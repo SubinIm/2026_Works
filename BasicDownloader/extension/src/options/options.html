@@ -1,0 +1,19 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Stream Downloader 설정</title><link rel="stylesheet" href="options.css"></head><body><main><h1>Personal Stream Downloader 설정</h1>
+<h2>기본 파일명과 자동 확인</h2>
+<label>기본 파일명 <input id="default-filename" maxlength="120" placeholder="download"></label>
+<p class="hint">제목 사용을 끄거나 제목을 찾지 못했을 때 쓰는 이름입니다. 각 후보에서도 수정할 수 있습니다. 이미 저장한 파일명은 바뀌지 않습니다.</p>
+<label><input id="auto-probe" type="checkbox"> 탐지 시 자동 Probe</label>
+<label><input id="batch-probe" type="checkbox"> Probe 버튼 한 번으로 현재 페이지 전체 후보 확인</label>
+<label><input id="download-after-probe" type="checkbox"> 후보 검색/일괄 Probe 완료 후 적합한 영상+음성 후보 1개 자동 다운로드</label>
+<p class="hint">두 옵션은 기본 꺼짐입니다. 전체 확인은 첫 성공에서 멈추지 않고 다시 Probe하며 쿠키를 보내지 않습니다. 자동 다운로드가 음성 없음으로 실패하면 해당 후보를 제외하고 계속 확인합니다. 후보 초기화/페이지 이동 중에는 자동 다운로드하지 않습니다. 중복 파일은 기존 확인 절차를 유지합니다.</p>
+<p class="hint">기본 꺼짐. 켜면 새 HTTP(S) 후보를 순서대로 확인합니다(다운로드는 시작하지 않음). 쿠키는 보내지 않습니다. 실패 시 반복하지 않으므로 인증이 필요한 후보는 직접 Probe하세요.</p>
+<h2>다운로드</h2><label>다운로드 폴더 <input id="root" placeholder="비우면 다운로드 폴더"></label><label>FFmpeg 경로 <input id="ffmpeg" placeholder="자동 탐색"></label><label>탭별 최대 후보 <input id="max" type="number" min="10" max="500"></label><label><input id="partial" type="checkbox"> 실패한 partial 파일 보존</label>
+<h2>YouTube 보조 엔진 (선택)</h2>
+<label><input id="youtube-enabled" type="checkbox"> YouTube 페이지 URL로 형식 조회·다운로드 허용</label>
+<label>yt-dlp.exe 전체 경로 <input id="yt-dlp" placeholder="공식 yt-dlp.exe 경로"></label>
+<label>Node.js 전체 경로 <input id="js-runtime" placeholder="node.exe 경로"></label>
+<p class="hint">별도 YouTube 버튼으로 사용합니다. 브라우저 쿠키는 읽거나 보내지 않습니다. 실행 파일은 자동 설치·업데이트하지 않으며 DRM·유료 접근 제한은 우회하지 않습니다. 현재 일반 VOD만 지원합니다.</p>
+<h2>화면과 파일명</h2><label>아이콘 클릭 시 기본 화면 <select id="view"><option value="popup">팝업</option><option value="sidepanel">사이드바</option></select></label>
+<label><input id="auto-title" type="checkbox"> 영상 제목으로 파일명 자동완성</label><label>파일명 형식 <input id="filename-template" maxlength="120" placeholder="{title} [{quality}]"></label><p class="hint">{title}: 제목 · {quality}: Probe로 확인한 해상도 · {date}: 오늘 날짜. 확인하지 못한 품질은 임의로 만들지 않습니다. 직접 편집한 파일명은 자동으로 덮어쓰지 않습니다.</p>
+<label><input id="group" type="checkbox"> 같은 페이지의 후보를 묶어서 표시</label><label><input id="notify" type="checkbox"> 다운로드 완료·실패 알림 받기</label><p class="hint">알림은 기본 꺼짐입니다. 알림에 제목·URL은 노출하지 않습니다. 목록에서 제거해도 영상 파일은 삭제되지 않습니다.</p>
+<button id="save">설정 저장</button><p id="status" role="status"></p><hr><h2>Native Host 설치</h2><p>확장을 unpacked로 로드한 뒤 <code>chrome://extensions</code>에서 확장 ID를 복사하고 등록하세요.</p><pre>.\scripts\install-host.ps1 -ExtensionId &lt;ID&gt; -ExecutablePath &lt;검증한 stream_host.exe 경로&gt;</pre></main><script src="options.js"></script></body></html>

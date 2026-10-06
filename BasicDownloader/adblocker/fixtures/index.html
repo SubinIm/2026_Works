@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>배너 차단기 · 로컬 검증 페이지</title>
+  <style>
+    :root { color-scheme: light; font-family: system-ui, sans-serif; color: #172f36; background: #f2f5f2; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    header { background: #183c36; color: #fff; padding: 32px max(24px, calc((100vw - 1080px) / 2)); }
+    header small { color: #bdd7cb; letter-spacing: .12em; }
+    h1 { margin: 9px 0; font-size: clamp(26px, 4vw, 38px); }
+    header p { margin: 0; color: #d8e7df; }
+    main { max-width: 1128px; margin: auto; padding: 24px; }
+    .grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; }
+    section, article { background: #fff; border: 1px solid #d6e0da; border-radius: 12px; padding: 24px; margin: 0 0 20px; }
+    h2 { font-size: 21px; margin: 0 0 12px; }
+    p, li { line-height: 1.7; }
+    .eyebrow { font-size: 12px; font-weight: 700; color: #537267; letter-spacing: .06em; }
+    .mock { display: block; text-decoration: none; padding: 18px; border: 2px dashed #c17b2d; background: #fff4dc; border-radius: 8px; margin-top: 14px; }
+    .mock strong { display: block; }
+    .publisher-partner-panel { display: flex; gap: 16px; align-items: center; background: #f9ede5; border: 1px solid #d9b69b; border-radius: 9px; padding: 18px; }
+    .publisher-partner-panel img { width: 112px; height: 86px; border-radius: 6px; }
+    .publisher-partner-panel a { color: #77481a; }
+    .publisher-partner-panel p { margin: 5px 0; }
+    button, .button { border: 0; border-radius: 6px; padding: 11px 15px; font: inherit; cursor: pointer; background: #24584b; color: white; }
+    button:focus-visible, a:focus-visible { outline: 3px solid #1c82c4; outline-offset: 3px; }
+    .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+    .status { color: #536d63; font-size: 14px; }
+    .video-placeholder { aspect-ratio: 16 / 9; max-width: 480px; border-radius: 8px; display: grid; place-items: center; background: #273e46; color: #e5eeeb; text-align: center; }
+    .video-placeholder span { font-size: 42px; display: block; }
+    iframe { width: 100%; height: 270px; border: 1px solid #cbd8cf; border-radius: 8px; }
+    code { background: #edf1ed; padding: 2px 5px; border-radius: 4px; font-size: .9em; }
+    footer { padding: 0 24px 24px; text-align: center; font-size: 13px; color: #6a7c71; }
+    @media (max-width: 780px) { .grid { grid-template-columns: 1fr; } .publisher-partner-panel { align-items: flex-start; } }
+  </style>
+</head>
+<body>
+  <header>
+    <small>LOCAL TEST / NO EXTERNAL REQUESTS</small>
+    <h1>배너 차단기 검증 페이지</h1>
+    <p>자동 숨김, 우클릭 선택, 저장·복원, 프레임별 적용을 확인합니다.</p>
+  </header>
+  <main>
+    <div class="grid">
+      <div>
+        <article id="normal-story">
+          <div class="eyebrow">정상 본문 · 항상 남아 있어야 합니다</div>
+          <h2>작은 정원에서 시작하는 주말</h2>
+          <p>창가에 작은 화분을 두고 햇빛의 방향을 관찰해 보세요. 이 문단과 아래 링크는 일반 콘텐츠입니다. 옆 배너를 숨기거나 복원해도 남아 있어야 합니다.</p>
+          <a href="#normal-video">본문의 영상 영역으로 이동</a>
+        </article>
+        <section id="manual-section">
+          <h2>1. 우클릭으로 직접 숨기기</h2>
+          <p>아래 협찬 카드의 이미지·링크·문구를 각각 우클릭해 대상 선택을 확인하세요. 미리보기에서 이 카드만 선택하고 저장합니다.</p>
+          <div id="partner-panel" class="publisher-partner-panel">
+            <a href="#normal-story" aria-label="협찬 이미지 링크"><img src="/sample.svg" alt="협찬 카드의 파란 화분"></a>
+            <div><span class="eyebrow">협찬 / 수동 선택 대상</span><p><a href="#normal-story">주말 정원 용품 둘러보기</a></p><p>범용 자동 선택자와 겹치지 않는 예시입니다.</p></div>
+          </div>
+          <p id="manual-sibling">✅ 카드 바로 뒤의 정상 문장입니다. 수동 숨김 후에도 이 문장은 남아 있어야 합니다.</p>
+        </section>
+        <section id="dynamic-section">
+          <h2>2. 다시 삽입되는 카드</h2>
+          <p>페이지를 연 뒤 1.5초 후 카드가 추가됩니다. 카드를 숨긴 뒤 재삽입 버튼을 눌러 같은 규칙이 계속 적용되는지 확인합니다.</p>
+          <div class="controls"><button id="insert-partner" type="button">동일한 카드 재삽입</button><span id="dynamic-status" class="status" role="status">삽입 대기 중</span></div>
+          <div id="dynamic-slot"></div>
+          <p id="dynamic-sibling">✅ 동적 카드 아래에 있는 정상 본문입니다.</p>
+        </section>
+      </div>
+      <div>
+        <section>
+          <h2>자동 숨김 대상</h2>
+          <p>기본 요소 필터가 켜져 있으면 아래 두 예시가 숨겨져야 합니다. 확장 기능을 끄면 보이는지 비교하세요.</p>
+          <ins class="adsbygoogle mock"><strong>자동 배너 A</strong><code>ins.adsbygoogle</code> 표식이 있는 테스트 요소입니다.</ins>
+          <div class="mock" data-ad-client="fixture-client" data-ad-slot="fixture-slot"><strong>자동 배너 B</strong><code>[data-ad-client][data-ad-slot]</code> 표식이 있는 테스트 요소입니다.</div>
+          <p id="automatic-sibling">✅ 이 안내 문구는 자동 숨김 대상이 아닙니다.</p>
+        </section>
+        <section id="normal-video">
+          <h2>정상 영상 영역</h2>
+          <div class="video-placeholder" role="img" aria-label="일반 영상 콘텐츠를 나타내는 모형"><div><span>▶</span>정상 콘텐츠 · 영상 플레이어 모형</div></div>
+          <p>영상 재생과 영상 내부 광고는 이 검증의 범위에 포함되지 않습니다. 이 영역은 계속 보여야 합니다.</p>
+        </section>
+      </div>
+    </div>
+    <section>
+      <h2>3. 같은 호스트의 iframe</h2>
+      <p>프레임 내부 카드를 우클릭합니다. 프레임 바깥의 본문이나 다른 프레임이 대신 선택되면 안 됩니다.</p>
+      <iframe title="같은 호스트의 배너 검증 프레임" src="/frame.html?label=same-host"></iframe>
+    </section>
+    <section>
+      <h2>4. 다른 호스트 이름의 iframe</h2>
+      <p><code>127.0.0.1</code>과 <code>localhost</code>를 서로 다른 호스트로 사용합니다. 이 프레임에 저장한 규칙은 같은 선택자를 가진 위 프레임에 적용되면 안 됩니다.</p>
+      <iframe id="alternate-frame" title="다른 호스트 이름의 배너 검증 프레임"></iframe>
+      <p class="status">다른 호스트 이름으로 열기: <a id="alternate-link" href="#">주소 준비 중</a></p>
+    </section>
+    <section>
+      <h2>5. 주소 없는 광고 프레임</h2>
+      <p>아래 프레임은 실제 포털 광고처럼 about:blank / srcdoc 문서입니다. 우클릭으로 선택하고 저장할 수 있어야 합니다.</p>
+      <iframe id="blank-frame" title="about:blank 선택 검증"></iframe>
+      <iframe id="srcdoc-frame" title="srcdoc 선택 검증" srcdoc="<!doctype html><body><h2>srcdoc 본문</h2><div id='srcdoc-partner' style='margin:12px;padding:20px;background:#fff1dc'>srcdoc 협찬 카드</div><p>보존할 일반 내용</p></body>"></iframe>
+    </section>
+  </main>
+  <footer>외부 광고 서버·추적 도구·라이브러리를 사용하지 않는 로컬 검증 자료입니다.</footer>
+  <script>
+    document.getElementById('blank-frame').contentDocument.body.innerHTML = '<h2>about:blank 본문</h2><div id="blank-partner" style="margin:12px;padding:20px;background:#fff1dc">빈 주소의 협찬 카드</div><p>보존할 일반 내용</p>';
+    let insertionCount = 0;
+    function insertPartner() {
+      const panel = document.createElement('div');
+      panel.id = 'returning-partner-panel';
+      panel.className = 'publisher-partner-panel';
+      panel.style.marginTop = '16px';
+      panel.innerHTML = '<img src="/sample.svg" alt="동적 협찬 이미지"><div><span class="eyebrow">협찬 / 동적 삽입</span><p>저장한 선택자로 다시 숨겨져야 하는 카드</p><a href="#normal-story">협찬 링크 보기</a></div>';
+      document.getElementById('dynamic-slot').replaceChildren(panel);
+      document.getElementById('dynamic-status').textContent = `삽입 완료: ${++insertionCount}회`;
+    }
+    document.getElementById('insert-partner').addEventListener('click', insertPartner);
+    setTimeout(insertPartner, 1500);
+    const alternate = new URL(location.href);
+    alternate.hostname = location.hostname === 'localhost' ? '127.0.0.1' : 'localhost';
+    alternate.pathname = '/frame.html';
+    alternate.search = '?label=alternate-host';
+    document.getElementById('alternate-frame').src = alternate.href;
+    alternate.pathname = '/';
+    alternate.search = '';
+    const link = document.getElementById('alternate-link');
+    link.href = alternate.href;
+    link.textContent = alternate.href;
+  </script>
+</body>
+</html>

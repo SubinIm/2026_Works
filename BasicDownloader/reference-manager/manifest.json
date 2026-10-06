@@ -1,0 +1,8 @@
+{
+  "manifest_version": 3,
+  "name": "Paperdesk · 논문과 기술문서",
+  "version": "0.1.0",
+  "description": "논문과 기술문서를 수집하고 PDF, 태그, 메모를 내 PC에서 관리합니다.",
+  "permissions": ["activeTab", "scripting", "unlimitedStorage"],
+  "action": {"default_popup": "popup.html", "default_title": "Paperdesk에 저장"}
+}

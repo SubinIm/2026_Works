@@ -1,0 +1,754 @@
+[
+  {
+    "id": 1,
+    "priority": 1,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||doubleclick.net^",
+      "domainType": "thirdParty",
+      "resourceTypes": [
+        "script",
+        "image",
+        "sub_frame",
+        "xmlhttprequest",
+        "ping",
+        "stylesheet",
+        "font",
+        "other"
+      ],
+      "excludedInitiatorDomains": [
+        "youtube.com",
+        "youtube-nocookie.com",
+        "youtu.be"
+      ]
+    }
+  },
+  {
+    "id": 2,
+    "priority": 1,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||googlesyndication.com^",
+      "domainType": "thirdParty",
+      "resourceTypes": [
+        "script",
+        "image",
+        "sub_frame",
+        "xmlhttprequest",
+        "ping",
+        "stylesheet",
+        "font",
+        "other"
+      ],
+      "excludedInitiatorDomains": [
+        "youtube.com",
+        "youtube-nocookie.com",
+        "youtu.be"
+      ]
+    }
+  },
+  {
+    "id": 3,
+    "priority": 1,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||googleadservices.com^",
+      "domainType": "thirdParty",
+      "resourceTypes": [
+        "script",
+        "image",
+        "sub_frame",
+        "xmlhttprequest",
+        "ping",
+        "stylesheet",
+        "font",
+        "other"
+      ],
+      "excludedInitiatorDomains": [
+        "youtube.com",
+        "youtube-nocookie.com",
+        "youtu.be"
+      ]
+    }
+  },
+  {
+    "id": 4,
+    "priority": 1,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||adservice.google.com^",
+      "domainType": "thirdParty",
+      "resourceTypes": [
+        "script",
+        "image",
+        "sub_frame",
+        "xmlhttprequest",
+        "ping",
+        "stylesheet",
+        "font",
+        "other"
+      ],
+      "excludedInitiatorDomains": [
+        "youtube.com",
+        "youtube-nocookie.com",
+        "youtu.be"
+      ]
+    }
+  },
+  {
+    "id": 5,
+    "priority": 1,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||amazon-adsystem.com^",
+      "domainType": "thirdParty",
+      "resourceTypes": [
+        "script",
+        "image",
+        "sub_frame",
+        "xmlhttprequest",
+        "ping",
+        "stylesheet",
+        "font",
+        "other"
+      ],
+      "excludedInitiatorDomains": [
+        "youtube.com",
+        "youtube-nocookie.com",
+        "youtu.be"
+      ]
+    }
+  },
+  {
+    "id": 6,
+    "priority": 1,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||adnxs.com^",
+      "domainType": "thirdParty",
+      "resourceTypes": [
+        "script",
+        "image",
+        "sub_frame",
+        "xmlhttprequest",
+        "ping",
+        "stylesheet",
+        "font",
+        "other"
+      ],
+      "excludedInitiatorDomains": [
+        "youtube.com",
+        "youtube-nocookie.com",
+        "youtu.be"
+      ]
+    }
+  },
+  {
+    "id": 7,
+    "priority": 1,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||adsrvr.org^",
+      "domainType": "thirdParty",
+      "resourceTypes": [
+        "script",
+        "image",
+        "sub_frame",
+        "xmlhttprequest",
+        "ping",
+        "stylesheet",
+        "font",
+        "other"
+      ],
+      "excludedInitiatorDomains": [
+        "youtube.com",
+        "youtube-nocookie.com",
+        "youtu.be"
+      ]
+    }
+  },
+  {
+    "id": 8,
+    "priority": 1,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||adform.net^",
+      "domainType": "thirdParty",
+      "resourceTypes": [
+        "script",
+        "image",
+        "sub_frame",
+        "xmlhttprequest",
+        "ping",
+        "stylesheet",
+        "font",
+        "other"
+      ],
+      "excludedInitiatorDomains": [
+        "youtube.com",
+        "youtube-nocookie.com",
+        "youtu.be"
+      ]
+    }
+  },
+  {
+    "id": 9,
+    "priority": 1,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||advertising.com^",
+      "domainType": "thirdParty",
+      "resourceTypes": [
+        "script",
+        "image",
+        "sub_frame",
+        "xmlhttprequest",
+        "ping",
+        "stylesheet",
+        "font",
+        "other"
+      ],
+      "excludedInitiatorDomains": [
+        "youtube.com",
+        "youtube-nocookie.com",
+        "youtu.be"
+      ]
+    }
+  },
+  {
+    "id": 10,
+    "priority": 1,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||rubiconproject.com^",
+      "domainType": "thirdParty",
+      "resourceTypes": [
+        "script",
+        "image",
+        "sub_frame",
+        "xmlhttprequest",
+        "ping",
+        "stylesheet",
+        "font",
+        "other"
+      ],
+      "excludedInitiatorDomains": [
+        "youtube.com",
+        "youtube-nocookie.com",
+        "youtu.be"
+      ]
+    }
+  },
+  {
+    "id": 11,
+    "priority": 1,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||pubmatic.com^",
+      "domainType": "thirdParty",
+      "resourceTypes": [
+        "script",
+        "image",
+        "sub_frame",
+        "xmlhttprequest",
+        "ping",
+        "stylesheet",
+        "font",
+        "other"
+      ],
+      "excludedInitiatorDomains": [
+        "youtube.com",
+        "youtube-nocookie.com",
+        "youtu.be"
+      ]
+    }
+  },
+  {
+    "id": 12,
+    "priority": 1,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||openx.net^",
+      "domainType": "thirdParty",
+      "resourceTypes": [
+        "script",
+        "image",
+        "sub_frame",
+        "xmlhttprequest",
+        "ping",
+        "stylesheet",
+        "font",
+        "other"
+      ],
+      "excludedInitiatorDomains": [
+        "youtube.com",
+        "youtube-nocookie.com",
+        "youtu.be"
+      ]
+    }
+  },
+  {
+    "id": 13,
+    "priority": 1,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||casalemedia.com^",
+      "domainType": "thirdParty",
+      "resourceTypes": [
+        "script",
+        "image",
+        "sub_frame",
+        "xmlhttprequest",
+        "ping",
+        "stylesheet",
+        "font",
+        "other"
+      ],
+      "excludedInitiatorDomains": [
+        "youtube.com",
+        "youtube-nocookie.com",
+        "youtu.be"
+      ]
+    }
+  },
+  {
+    "id": 14,
+    "priority": 1,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||criteo.com^",
+      "domainType": "thirdParty",
+      "resourceTypes": [
+        "script",
+        "image",
+        "sub_frame",
+        "xmlhttprequest",
+        "ping",
+        "stylesheet",
+        "font",
+        "other"
+      ],
+      "excludedInitiatorDomains": [
+        "youtube.com",
+        "youtube-nocookie.com",
+        "youtu.be"
+      ]
+    }
+  },
+  {
+    "id": 15,
+    "priority": 1,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||criteo.net^",
+      "domainType": "thirdParty",
+      "resourceTypes": [
+        "script",
+        "image",
+        "sub_frame",
+        "xmlhttprequest",
+        "ping",
+        "stylesheet",
+        "font",
+        "other"
+      ],
+      "excludedInitiatorDomains": [
+        "youtube.com",
+        "youtube-nocookie.com",
+        "youtu.be"
+      ]
+    }
+  },
+  {
+    "id": 16,
+    "priority": 1,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||smartadserver.com^",
+      "domainType": "thirdParty",
+      "resourceTypes": [
+        "script",
+        "image",
+        "sub_frame",
+        "xmlhttprequest",
+        "ping",
+        "stylesheet",
+        "font",
+        "other"
+      ],
+      "excludedInitiatorDomains": [
+        "youtube.com",
+        "youtube-nocookie.com",
+        "youtu.be"
+      ]
+    }
+  },
+  {
+    "id": 17,
+    "priority": 1,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||adroll.com^",
+      "domainType": "thirdParty",
+      "resourceTypes": [
+        "script",
+        "image",
+        "sub_frame",
+        "xmlhttprequest",
+        "ping",
+        "stylesheet",
+        "font",
+        "other"
+      ],
+      "excludedInitiatorDomains": [
+        "youtube.com",
+        "youtube-nocookie.com",
+        "youtu.be"
+      ]
+    }
+  },
+  {
+    "id": 18,
+    "priority": 1,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||taboola.com^",
+      "domainType": "thirdParty",
+      "resourceTypes": [
+        "script",
+        "image",
+        "sub_frame",
+        "xmlhttprequest",
+        "ping",
+        "stylesheet",
+        "font",
+        "other"
+      ],
+      "excludedInitiatorDomains": [
+        "youtube.com",
+        "youtube-nocookie.com",
+        "youtu.be"
+      ]
+    }
+  },
+  {
+    "id": 19,
+    "priority": 1,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||outbrain.com^",
+      "domainType": "thirdParty",
+      "resourceTypes": [
+        "script",
+        "image",
+        "sub_frame",
+        "xmlhttprequest",
+        "ping",
+        "stylesheet",
+        "font",
+        "other"
+      ],
+      "excludedInitiatorDomains": [
+        "youtube.com",
+        "youtube-nocookie.com",
+        "youtu.be"
+      ]
+    }
+  },
+  {
+    "id": 20,
+    "priority": 1,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||ad.daum.net^",
+      "domainType": "thirdParty",
+      "resourceTypes": [
+        "script",
+        "image",
+        "sub_frame",
+        "xmlhttprequest",
+        "ping",
+        "stylesheet",
+        "font",
+        "other"
+      ],
+      "excludedInitiatorDomains": [
+        "youtube.com",
+        "youtube-nocookie.com",
+        "youtu.be"
+      ]
+    }
+  },
+  {
+    "id": 21,
+    "priority": 1,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||ads.daum.net^",
+      "domainType": "thirdParty",
+      "resourceTypes": [
+        "script",
+        "image",
+        "sub_frame",
+        "xmlhttprequest",
+        "ping",
+        "stylesheet",
+        "font",
+        "other"
+      ],
+      "excludedInitiatorDomains": [
+        "youtube.com",
+        "youtube-nocookie.com",
+        "youtu.be"
+      ]
+    }
+  },
+  {
+    "id": 22,
+    "priority": 1,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||ad.naver.com^",
+      "domainType": "thirdParty",
+      "resourceTypes": [
+        "script",
+        "image",
+        "sub_frame",
+        "xmlhttprequest",
+        "ping",
+        "stylesheet",
+        "font",
+        "other"
+      ],
+      "excludedInitiatorDomains": [
+        "youtube.com",
+        "youtube-nocookie.com",
+        "youtu.be"
+      ]
+    }
+  },
+  {
+    "id": 23,
+    "priority": 1,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||ads.naver.com^",
+      "domainType": "thirdParty",
+      "resourceTypes": [
+        "script",
+        "image",
+        "sub_frame",
+        "xmlhttprequest",
+        "ping",
+        "stylesheet",
+        "font",
+        "other"
+      ],
+      "excludedInitiatorDomains": [
+        "youtube.com",
+        "youtube-nocookie.com",
+        "youtu.be"
+      ]
+    }
+  },
+  {
+    "id": 24,
+    "priority": 1,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||adcr.naver.com^",
+      "domainType": "thirdParty",
+      "resourceTypes": [
+        "script",
+        "image",
+        "sub_frame",
+        "xmlhttprequest",
+        "ping",
+        "stylesheet",
+        "font",
+        "other"
+      ],
+      "excludedInitiatorDomains": [
+        "youtube.com",
+        "youtube-nocookie.com",
+        "youtu.be"
+      ]
+    }
+  },
+  {
+    "id": 25,
+    "priority": 1,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||nam.veta.naver.com/gfp/",
+      "initiatorDomains": [
+        "www.naver.com"
+      ],
+      "resourceTypes": [
+        "xmlhttprequest"
+      ]
+    }
+  },
+  {
+    "id": 26,
+    "priority": 1,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||siape.veta.naver.com/fxshow?",
+      "initiatorDomains": [
+        "www.naver.com"
+      ],
+      "resourceTypes": [
+        "sub_frame"
+      ]
+    }
+  },
+  {
+    "id": 27,
+    "priority": 1,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||ssl.pstatic.net/tveta/libs/glad/",
+      "initiatorDomains": [
+        "www.naver.com"
+      ],
+      "resourceTypes": [
+        "script"
+      ]
+    }
+  },
+  {
+    "id": 28,
+    "priority": 1,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||ssl.pstatic.net/tveta/libs/ndpsdk/",
+      "initiatorDomains": [
+        "www.naver.com"
+      ],
+      "resourceTypes": [
+        "script"
+      ]
+    }
+  },
+  {
+    "id": 29,
+    "priority": 1,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||ssl.pstatic.net/melona/libs/glad/",
+      "initiatorDomains": [
+        "www.naver.com"
+      ],
+      "resourceTypes": [
+        "script"
+      ]
+    }
+  },
+  {
+    "id": 30,
+    "priority": 1,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||sstatic.naver.net/tveta/libs/glad/",
+      "initiatorDomains": [
+        "www.naver.com"
+      ],
+      "resourceTypes": [
+        "script"
+      ]
+    }
+  },
+  {
+    "id": 31,
+    "priority": 1,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||sstatic.naver.net/tveta/libs/ndpsdk/",
+      "initiatorDomains": [
+        "www.naver.com"
+      ],
+      "resourceTypes": [
+        "script"
+      ]
+    }
+  },
+  {
+    "id": 32,
+    "priority": 1,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||recoshopping.naver.com^",
+      "initiatorDomains": [
+        "www.naver.com"
+      ],
+      "resourceTypes": [
+        "sub_frame"
+      ]
+    }
+  }
+]

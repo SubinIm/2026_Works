@@ -1,0 +1,3 @@
+e886e80063a0fe8aae6cb1b2443bc3920cd71e2c6a4e13b212dc996076148ffe  basic-banner-blocker-0.10.2.zip
+725cef08c056cf5c553584f6da3c9f6dbd0cba159b3fd1a578cc43c9d88b0d24  paperdesk-0.1.0.zip
+7855362029791d485a30e063255415f19ba4364a8af7189328a830d5d93c92eb  personal-stream-downloader-0.3.0-windows-x64.zip

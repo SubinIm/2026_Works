@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Stream Downloader</title><link rel="stylesheet" href="popup.css"></head><body>
+<header><strong>Personal Stream Downloader</strong><span id="health">Host 확인 중…</span></header>
+<section class="toolbar"><span id="page">현재 탭</span><button id="refresh">새로고침</button><button id="clear">후보 초기화</button></section>
+<nav class="view-toolbar" aria-label="보기와 설정"><button id="switch-view">사이드바로 보기</button><button id="settings">설정</button><label><input id="group-candidates" type="checkbox"> 같은 페이지 후보 묶기</label></nav>
+<section class="download-manager"><button id="jobs-toggle" class="section-toggle" aria-expanded="true">다운로드 목록 ▾</button><div id="jobs-content"><div class="jobs-toolbar"><label>표시 <select id="job-filter"><option value="all">전체</option><option value="active">진행 중</option><option value="completed">완료</option><option value="failed">실패·취소</option></select></label><label><input id="select-jobs" type="checkbox"> 표시된 완료·실패 항목 선택</label><button id="remove-selected">선택 목록 지우기</button><button id="clear-completed">완료 목록 비우기</button></div><p class="records-note">목록에서 지워도 영상 파일은 삭제되지 않습니다. 진행 중 작업은 지울 수 없습니다.</p><p id="manager-message" role="status"></p><section id="jobs" class="jobs"></section></div></section>
+<section class="view-toolbar search-toolbar"><button id="find-av">영상+음성 후보 찾기</button>
+<div class="option-row"><label><input id="batch-probe" type="checkbox"> 전체 후보 확인</label><span class="help-wrap"><button type="button" class="help-trigger" aria-label="전체 후보 확인 도움말">?</button><span class="help-tip" role="tooltip">Probe 한 번으로 현재 페이지의 HTTP(S) 후보를 모두 확인합니다. 쿠키 없이 검사하며, 이전 결과를 재사용하지 않고 다시 Probe합니다.</span></span></div>
+<div class="option-row"><label><input id="download-after-probe" type="checkbox"> 확인 후 자동 다운로드</label><span class="help-wrap"><button type="button" class="help-trigger" aria-label="자동 다운로드 도움말">?</button><span class="help-tip" role="tooltip">Probe·Download·시작에서 적합한 영상+음성 후보 1개를 확인 후 저장합니다. 쿠키 없이 검사하며, 확인이 끝나기 전에는 창을 열어 두세요. 로그인 쿠키·음성만 저장·무음 허용·Probe 생략을 선택하면 현재 후보를 사용합니다.</span></span></div>
+<span id="find-av-status" role="status"></span></section>
+<details id="refresh-details" class="compact-notice hidden"><summary id="refresh-summary">미디어 탐지 안내</summary><p id="refresh-note" class="records-note"></p></details>
+<section id="youtube-panel" class="youtube-panel hidden" aria-label="YouTube 보조 엔진">
+<h2>YouTube 페이지 다운로드</h2>
+<p id="youtube-status" role="status">쿠키 미전송 · 영상 페이지 URL 사용</p>
+<details><summary>보조 엔진 안내</summary><p>blob 주소를 변환하는 기능이 아닙니다. 별도 엔진이 현재 YouTube 영상의 저장 형식을 조회합니다. DRM·접근 제한을 우회하지 않습니다. 쿠키는 보내지 않으며 일반 VOD만 지원합니다.</p></details>
+<div class="youtube-options">
+<label>파일명 <input id="youtube-filename" maxlength="180" aria-label="YouTube 출력 파일명"></label>
+<label>최대 해상도 <select id="youtube-height"><option value="720">720p</option><option value="1080">1080p</option><option value="1440">1440p</option><option value="2160">2160p</option><option value="4320">4320p</option><option value="480">480p</option><option value="360">360p</option><option value="">최고 화질</option></select></label>
+<label>형식 <select id="youtube-container"><option value="mkv">MKV</option><option value="mp4">MP4 (H.264/AAC)</option></select></label>
+</div>
+<div class="option-row"><label><input id="youtube-audio-only" type="checkbox"> 음성만 저장</label></div>
+<div class="option-row"><label><input id="youtube-input-probe" type="checkbox" checked> 시작 전 형식 조회</label><span class="help-wrap"><button type="button" class="help-trigger" aria-label="YouTube 형식 조회 도움말">?</button><span class="help-tip" role="tooltip">추가 형식 조회는 선택입니다. 해제해도 다운로드 엔진의 필수 주소 해석과 저장 결과 검증은 유지됩니다.</span></span></div>
+<div class="actions"><button id="youtube-probe">YouTube 형식 조회</button><button id="youtube-download">YouTube 다운로드</button></div>
+</section>
+<main id="candidates"><p class="empty">미디어 후보를 기다리는 중입니다.</p></main>
+<div id="job-menu" class="context-menu hidden" role="menu" aria-label="다운로드 명령"></div>
+<template id="card"><article>
+<div class="candidate-heading"><div class="thumbnail-wrap"><img class="thumbnail hidden" loading="lazy" referrerpolicy="no-referrer" alt="영상 미리보기"><span class="thumbnail-fallback" aria-hidden="true">▶</span></div><div class="candidate-heading-text"><h2 class="media-title"></h2><small class="thumbnail-source"></small><div class="media-badges"></div></div></div>
+<div class="badges"><b class="kind"></b><span class="flags"></span></div>
+<details class="source-details"><summary>주소·탐지 정보</summary><div class="host"></div><code class="url"></code><small class="seen"></small><span class="score"></span></details>
+<details class="notice-container compact-notice hidden"><summary>실제 미디어 주소가 필요합니다</summary><p class="notice hidden"></p></details>
+<div class="option-row"><label><input class="session" type="checkbox"> 로그인 쿠키 포함</label><span class="help-wrap"><button type="button" class="help-trigger" aria-label="로그인 쿠키 도움말">?</button><span class="help-tip session-help" role="tooltip">로그인 때문에 Probe·다운로드가 거부될 때만 켜세요. 해당 미디어 URL에 적용되는 쿠키를 로컬 Host에 전달합니다. 기본은 쿠키 미전송이며, Referer는 별도로 전달됩니다. DRM을 해제하는 기능은 아닙니다.</span></span></div>
+<div class="actions"><button class="copy">URL 복사</button><button class="probe">Probe</button><button class="download">Download</button><button class="cancel hidden">취소</button><button class="open hidden">폴더에서 선택</button><button class="copy-error hidden">오류 상세 복사</button></div>
+<div class="options hidden"><label class="auto-title-option"><input class="auto-title" type="checkbox"> 영상 제목을 파일명으로 사용</label><input class="filename" maxlength="180" placeholder="출력 파일명" aria-label="출력 파일명"><select class="container" aria-label="컨테이너"><option value="auto">Auto</option><option value="mp4">MP4</option><option value="mkv">MKV</option></select><select class="overwrite" aria-label="같은 파일명 처리"><option value="number">자동 번호</option><option value="overwrite">덮어쓰기</option><option value="cancel">취소</option></select><button class="start">시작</button><label class="video-only-option"><input class="allow-video-only" type="checkbox"> 영상만 저장(무음 허용)</label></div>
+<div class="option-row"><label><input class="audio-only" type="checkbox"> 음성만 저장</label><span class="help-wrap"><button type="button" class="help-trigger" aria-label="음성만 저장 도움말">?</button><span class="audio-option-note help-tip session-help" role="tooltip"></span></span></div>
+<div class="option-row"><label><input class="probe-before-download" type="checkbox" checked> 시작 전 Probe</label><span class="help-wrap"><button type="button" class="help-trigger" aria-label="시작 전 Probe 도움말">?</button><span class="probe-option-note help-tip session-help" role="tooltip"></span></span></div>
+<div class="duplicate-warning hidden"><p class="duplicate-message"></p><button class="duplicate-play">기존 파일 재생</button><button class="duplicate-reveal">폴더에서 선택</button><button class="duplicate-continue">새로 다운로드</button><button class="duplicate-dismiss">닫기</button></div>
+<p class="message" role="status"></p><button class="retry-candidates hidden">음성 있는 다른 후보 모두 확인</button><details class="technical hidden"><summary>기술 상세</summary><pre class="result"></pre></details></article></template>
+<script src="popup.js"></script></body></html>
