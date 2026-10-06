@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
-import { routeFixture, playerData } from './youtube-fixture.mjs';
+import { routeFixture, routeAdSample, playerData } from './youtube-fixture.mjs';
 let chromium;
 try { ({ chromium } = await import(process.env.PLAYWRIGHT_MODULE ? pathToFileURL(process.env.PLAYWRIGHT_MODULE).href : 'playwright')); } catch {}
 const source = await readFile(new URL('../youtube-ads.js', import.meta.url), 'utf8');
@@ -186,14 +186,7 @@ test('YouTube skip resumes when a hidden player becomes visible without a DOM mu
 
 test('YouTube modern skip avoids rejected synthetic clicks and finishes only distinct ad media', { skip: !chromium }, async t => {
   const page = await setup(t);
-  const sample = await readFile(new URL('../fixtures/youtube-ad-sample.mp4', import.meta.url));
-  await page.route('https://www.youtube.com/skip-fixture.mp4', route => {
-    const match = /^bytes=(\d+)-(\d*)$/.exec(route.request().headers().range || '');
-    const start = match ? Number(match[1]) : 0;
-    const end = match?.[2] ? Math.min(Number(match[2]), sample.length - 1) : sample.length - 1;
-    return route.fulfill({ status: match ? 206 : 200, contentType: 'video/mp4', body: sample.subarray(start, end + 1),
-      headers: { 'accept-ranges': 'bytes', ...(match ? { 'content-range': `bytes ${start}-${end}/${sample.length}` } : {}) } });
-  });
+  await routeAdSample(page);
   await page.evaluate(async () => {
     const player = document.querySelector('#movie_player'), button = player.querySelector('button'), video = player.querySelector('video');
     button.className = 'ytp-skip-ad-button';
@@ -205,11 +198,12 @@ test('YouTube modern skip avoids rejected synthetic clicks and finishes only dis
     video.addEventListener('ended', () => { window.skips++;player.classList.remove('ad-showing','ad-interrupting'); });
     video.src = '/skip-fixture.mp4';video.volume = 0.4;video.playbackRate = 1.25;
     await video.play();
-    button.disabled = true;player.classList.add('ad-showing');
+    video.pause();button.disabled = true;button.hidden = true;player.classList.add('ad-showing');
   });
   await page.waitForTimeout(650);
   assert.equal(await page.evaluate(() => window.skips), 0);
-  await page.evaluate(() => document.querySelector('button').disabled = false);
+  // Preserve a user's paused ad. Resuming permits completion without a skip UI.
+  await page.evaluate(() => document.querySelector('video').play());
   await page.waitForFunction(() => window.skips === 1, null, { timeout: 3000 }).catch(async error => {
     t.diagnostic(JSON.stringify(await page.evaluate(() => {
       const video = document.querySelector('video'), player = document.querySelector('#movie_player');
@@ -229,11 +223,14 @@ test('YouTube modern skip avoids rejected synthetic clicks and finishes only dis
     const video = document.querySelector('video');
     video.currentTime = 0;await video.play();
   });
-  for (const condition of ['combined', 'stale', 'normal-progress', 'unknown-progress', 'duration-mismatch']) {
+  for (const condition of ['combined', 'stale', 'normal-progress', 'unknown-progress', 'duration-mismatch', 'response-conflict', 'video-conflict', 'incomplete-current-response']) {
     await page.evaluate(condition => {
       const video = document.querySelector('video'), player = document.querySelector('#movie_player');
       window.ytInitialPlayerResponse.videoDetails.videoId = condition === 'stale' ? 'previous-video' : 'fixture-main';
       window.ytInitialPlayerResponse.videoDetails.lengthSeconds = condition === 'combined' ? String(video.duration) : '120';
+      player.getPlayerResponse = () => condition === 'response-conflict' ? { videoDetails: { videoId: 'previous-video', lengthSeconds: '120' } } :
+        condition === 'incomplete-current-response' ? { videoDetails: { videoId: 'fixture-main' } } : undefined;
+      player.getVideoData = () => ({ video_id: condition === 'video-conflict' ? 'previous-video' : 'fixture-main' });
       player.getProgressState = () => condition === 'unknown-progress' ? undefined : ({ allowSeeking: condition === 'normal-progress',
         duration: condition === 'duration-mismatch' ? 120 : video.duration });
       player.classList.add('ad-showing');
@@ -243,6 +240,19 @@ test('YouTube modern skip avoids rejected synthetic clicks and finishes only dis
     assert.ok(await page.evaluate(() => document.querySelector('video').currentTime < 10), condition);
     assert.equal(await page.evaluate(() => window.rejectedClicks), 0, condition);
   }
+  // Actual failure: SPA navigation leaves no initial response, the current APIs
+  // identify the main video, and an unskippable ad has no usable button.
+  await page.evaluate(() => {
+    const player = document.querySelector('#movie_player'), video = player.querySelector('video');
+    window.ytInitialPlayerResponse = undefined;
+    player.querySelector('button').remove();
+    player.getVideoData = () => ({ video_id: 'fixture-main' });
+    player.getPlayerResponse = () => ({ videoDetails: { videoId: 'fixture-main', lengthSeconds: '120' } });
+    player.getProgressState = () => ({ allowSeeking: false, duration: video.duration });
+    document.dispatchEvent(new Event('yt-navigate-finish'));
+  });
+  await page.waitForFunction(() => window.skips === 2, null, { timeout: 3000 });
+  assert.equal(await page.evaluate(() => window.rejectedClicks), 0);
 });
 
 test('YouTube fetch keeps AbortError and iframe documents retain their unpatched initial data', { skip: !chromium }, async t => {

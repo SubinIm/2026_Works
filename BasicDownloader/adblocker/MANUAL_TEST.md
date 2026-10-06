@@ -411,6 +411,27 @@ Sandbox의 최상위 API 노출 감소와 지원 Permissions-Policy 제한을 �
 
 공통적인 비로그인 1분 제한은 아니다. 공식 안내는 특정 비로그인 접근을 제한할 수 있고 확장·네트워크·로그인 상태 등을 확인하라고 설명하지만 일률적 1분 상한을 설명하지 않는다. 이번 baseline은 영상의 90초 이후를 실제로 재생하다가 다시 실패했으므로 '영상 타임라인 1분 이후는 비로그인이라 절대 재생 불가'라는 해석도 맞지 않는다. [YouTube 공식 안내](https://support.google.com/youtube/answer/3037019?hl=en).
 
+## 0.10.3 — 버튼 없는 광고와 SPA 초기 정보 누락 (2026-10-06)
+
+사용자의 광고 잔류 보고를 로그인된 현재 영상 `https://www.youtube.com/watch?v=3CI2xlP361w`에서 확인했다. 사용자 탭의 15.021초 광고는 1.545454초에서 일시정지 상태였다. 현대 건너뛰기 버튼은 DOM에 있었지만 숨겨져 있었고 `ytInitialPlayerResponse`는 없었다. 현재 플레이어는 `getVideoData().video_id`와 `getPlayerResponse().videoDetails`에서 올바른 영상 ID 및 본 영상 길이 6294초를 제공했다. `getProgressState()`는 allowSeeking=false, duration=15.021을 반환했다. 증거: `test-results/youtube-remaining-ad-before.json`. 0.10.2의 활성 버튼·초기 응답 의존 조건이 이 광고를 처리하지 못했다. 일시정지한 사용자 탭은 재생하거나 위치를 바꾸지 않았다.
+
+0.10.3은 현재 플레이어 응답을 우선하며 현재 영상 ID 또는 응답 ID가 URL과 충돌하면 오래된 초기 응답으로 대체하지 않는다. 현재 응답이 없을 때만 초기 응답을 대조한다. 버튼 없이도 기존 별도 광고 구간 보호 조건을 충족하면 종료한다. 본 영상과 합쳐진 스트림, 실제 끝 탐색 불가, 길이 충돌, 일시정지 및 불명확한 진행 정보는 처리하지 않는다. SABR 데이터 보존과 음량·속도·설정은 유지한다.
+
+| 검사 | 판정 | 증거와 범위 |
+|---|---|---|
+| 0.10.2에서 남은 실제 광고 | CONFIRMED (live) | 초기 응답 없음·숨겨진 버튼·별도 15초 광고, 위 JSON. 일시정지 보존도 필요 |
+| 관련 자동 회귀 | PASS | `youtube-spa-focused-tests.txt`: 15개 통과, 실패·생략 0 |
+| 버튼 없는 광고 및 최신 SPA 정보 | PASS (fixture) | 초기 응답 없음·버튼 제거·현재 API만 존재, 실제 MP4 종료. 숨겨진 비활성 버튼도 방해하지 않음. synthetic click 0 |
+| 정상 영상 보호 | PASS (fixture) | 결합 길이·오래된 초기 ID·현재 응답 ID 충돌·현재 영상 ID 충돌·불완전 현재 응답·진행 정보 없음/충돌에서 강제 이동 없음. 일시정지 보존·음량/속도 유지 |
+| 실제 확장 등록 경로 | PASS (native Edge) | 등록된 MAIN 스크립트가 초기 정보·버튼 없는 광고를 재생 재개 후 종료. 일시정지 중에는 위치 유지. 옵션 OFF·사이트/전체 중지·해제 후 복원 검사 포함 |
+| 전체 자동 회귀 | PASS | `youtube-spa-final-tests.txt`: 144개 통과, 실패·취소·생략 0, 약 87초. `node --check youtube-ads.js`도 통과 |
+| 개인 프로필 최신 소스 적용 | PASS (live) | 사용자가 0.10.3으로 새로고침한 뒤 별도 탭에서 등록 스크립트 소스가 작업 폴더와 동일함을 확인. `youtube-103-installed-source.json`. 로그인 상태 유지 |
+| 실제 광고 → 본 영상 전환 | PARTIAL (live observation) | `3CI2xlP361w` 새 탭에서 '테크니컬 아티스트 추천 AI' 광고와 건너뛰기 UI가 관측된 뒤 사용자/개발 도구의 버튼 클릭·미디어 위치 변경 없이 본 영상으로 복귀. 초기 종료 시점 기록이 없어 자동 종료 방식의 확정 증거로 세지 않음 |
+| 실제 자동 종료의 진단 기록 | NOT CONFIRMED | 자체 탭에서 종료 코드의 비중단 관찰 지점을 설치 후 재로드 및 기존 지정 영상 `HL0_OWSv7xo`로 이동. 추가 광고가 없어 종료 이벤트 표본 없음. 관찰 지점·임시 데이터는 제거하고 Debugger 해제 |
+| 실제 본 영상 긴 재생 | PASS (live observation) | `youtube-103-live-after-minute.json`: 디버거 해제 후 약 94.09초 동안 1058.46초 → 1152.55초 진행, readyState 4·재생 중·오류 없음. `youtube-103-live-normal.png` 화면. 자체 탭 정리, 사용자 일시정지 탭 유지 |
+
+검증 가이드 `docs/CHROME_EXTENSION_ACCEPTANCE.md`를 적용했다. 개인 프로필의 기존 규칙·인증·쿠키를 수정하지 않았다. 새 권한·인증 위장·일괄 미디어 차단은 추가하지 않았다.
+
 ## 0.10.2 — 로그인 세션의 건너뛰기 누락 보완 (2026-10-06)
 
 사용자가 건너뛰기 버튼이 있는 광고 노출을 보고했고, `substance.core` 로그인 세션 사용을 지정했다. 기존 `Mr_Rocket` 프로필은 다른 프로필이라고 확인하여 사용하지 않았다. 새로 연결된 Chrome 프로필 `수빈`에서 YouTube의 `LOGGED_IN=true`를 확인했다. 계정 로그인/로그아웃, 쿠키·인증 정보 삭제는 수행하지 않았다. 공통 가이드 `docs/CHROME_EXTENSION_ACCEPTANCE.md`를 적용한다.

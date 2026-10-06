@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Basic Banner Blocker",
-  "version": "0.10.2",
+  "version": "0.10.3",
   "minimum_chrome_version": "128",
   "description": "일반 웹사이트의 광고 요청과 배너를 차단하고, 우클릭한 요소를 사이트별로 숨기거나 화면 밖으로 이동시킵니다.",
   "permissions": ["storage", "contextMenus", "declarativeNetRequest", "sidePanel", "scripting"],

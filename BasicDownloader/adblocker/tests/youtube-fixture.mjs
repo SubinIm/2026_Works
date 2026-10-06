@@ -1,3 +1,16 @@
+import { readFile } from 'node:fs/promises';
+
+export async function routeAdSample(page) {
+  const sample = await readFile(new URL('../fixtures/youtube-ad-sample.mp4', import.meta.url));
+  await page.route('https://www.youtube.com/skip-fixture.mp4', route => {
+    const match = /^bytes=(\d+)-(\d*)$/.exec(route.request().headers().range || '');
+    const start = match ? Number(match[1]) : 0;
+    const end = match?.[2] ? Math.min(Number(match[2]), sample.length - 1) : sample.length - 1;
+    return route.fulfill({ status: match ? 206 : 200, contentType: 'video/mp4', body: sample.subarray(start, end + 1),
+      headers: { 'accept-ranges': 'bytes', ...(match ? { 'content-range': `bytes ${start}-${end}/${sample.length}` } : {}) } });
+  });
+}
+
 export const playerData = () => ({
   adPlacements: [{ marker: 'pre-roll' }], adSlots: [{ marker: 'mid-roll' }], playerAds: [{ marker: 'legacy' }],
   videoDetails: { videoId: 'fixture-main', title: 'Normal video', lengthSeconds: '120' },

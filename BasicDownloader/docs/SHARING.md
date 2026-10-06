@@ -6,7 +6,7 @@
 
 | 확장프로그램 | 다운로드 | 필요 환경 |
 | --- | --- | --- |
-| Basic Banner Blocker 0.10.2 | [설치용 ZIP](https://github.com/SubinIm/2026_Works/raw/refs/heads/main/BasicDownloader/packages/basic-banner-blocker-0.10.2.zip) | Chrome 128 이상 |
+| Basic Banner Blocker 0.10.3 | [설치용 ZIP](https://github.com/SubinIm/2026_Works/raw/refs/heads/main/BasicDownloader/packages/basic-banner-blocker-0.10.3.zip) | Chrome 128 이상 |
 | Paperdesk 0.1.0 | [설치용 ZIP](https://github.com/SubinIm/2026_Works/raw/refs/heads/main/BasicDownloader/packages/paperdesk-0.1.0.zip) | Chrome 또는 Edge |
 | Personal Stream Downloader 0.3.0 | [Windows x64 설치용 ZIP](https://github.com/SubinIm/2026_Works/raw/refs/heads/main/BasicDownloader/packages/personal-stream-downloader-0.3.0-windows-x64.zip) | Windows 10/11 x64, Chrome 127 이상, FFmpeg/FFprobe |
 

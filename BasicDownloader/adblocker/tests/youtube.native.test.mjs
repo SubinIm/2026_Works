@@ -5,7 +5,7 @@ import { existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { basename, dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { routeFixture } from './youtube-fixture.mjs';
+import { routeFixture, routeAdSample } from './youtube-fixture.mjs';
 let chromium;
 try { ({ chromium } = await import(process.env.PLAYWRIGHT_MODULE ? pathToFileURL(process.env.PLAYWRIGHT_MODULE).href : 'playwright')); } catch {}
 const executablePath = process.env.EXTENSION_BROWSER_PATH || 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe';
@@ -43,6 +43,25 @@ test('native YouTube option starts before inline scripts, persists, pauses and r
   assert.equal(saved.state.youtubeAdBlockingEnabled,true); assert.equal(saved.state.videoAdBlockingEnabled,false);
   await page.evaluate(()=>document.querySelector('#movie_player').classList.add('ad-showing'));
   await page.waitForFunction(()=>window.skips===1);
+  await routeAdSample(page);
+  await page.evaluate(async () => {
+    const player = document.querySelector('#movie_player'), video = player.querySelector('video');
+    player.querySelector('button').remove();
+    window.ytInitialPlayerResponse = undefined;
+    player.getVideoData = () => ({ video_id: 'fixture-main' });
+    player.getPlayerResponse = () => ({ videoDetails: { videoId: 'fixture-main', lengthSeconds: '120' } });
+    player.getProgressState = () => ({ allowSeeking: false, duration: video.duration });
+    video.addEventListener('ended', () => { window.skips++;player.classList.remove('ad-showing'); });
+    video.src = '/skip-fixture.mp4';await video.play();video.pause();
+    player.classList.add('ad-showing');
+    document.dispatchEvent(new Event('yt-navigate-finish'));
+  });
+  await page.waitForTimeout(650);
+  assert.equal(await page.evaluate(() => window.skips), 1, 'Paused ad stays paused');
+  await page.evaluate(() => document.querySelector('video').play());
+  await page.waitForFunction(() => window.skips === 2, null, { timeout: 3000 });
+  assert.equal(await page.evaluate(() => document.querySelector('video').currentTime > 19), true,
+    'Registered MAIN script finishes a separate unskippable ad with only current SPA metadata');
   await send({type:'SET_SITE_ENABLED',site:'youtube.com',enabled:false});await page.reload();
   assert.ok((await page.evaluate(()=>window.boot)).adSlots);
   await page.evaluate(()=>document.querySelector('#movie_player').classList.add('ad-showing'));

@@ -146,13 +146,16 @@
     }
   }
 
-  // The current skip UI rejects synthetic clicks. For that UI, only finish a
-  // separate ad media segment once its skip button is available. Do not seek a
-  // combined/main stream, unknown player state or a stale SPA response.
+  // Current player APIs remain available after SPA navigation, when the initial
+  // response can be absent or stale. Conflicting current metadata fails closed.
+  // Finish only an independently seekable ad, including ads without a skip UI.
   function finishSeparateAd(player) {
     try {
-      const details = window.ytInitialPlayerResponse?.videoDetails;
       const id = new URL(location.href).searchParams.get('v');
+      const currentId = player.getVideoData?.()?.video_id;
+      if (!id || (currentId && currentId !== id)) return false;
+      const currentDetails = player.getPlayerResponse?.()?.videoDetails;
+      const details = currentDetails || window.ytInitialPlayerResponse?.videoDetails;
       const mainDuration = Number(details?.lengthSeconds);
       const progress = player.getProgressState?.();
       const videos = player.querySelectorAll('video');
@@ -193,11 +196,11 @@
     for (const player of document.querySelectorAll('#movie_player.html5-video-player, #shorts-player.html5-video-player')) {
       if (!player.matches('.ad-showing, .ad-interrupting') || !visible(player)) continue;
       active = true;
+      if (finishSeparateAd(player)) continue;
       for (const button of player.querySelectorAll('.ytp-ad-skip-button, .ytp-ad-skip-button-modern, .ytp-skip-ad-button, .ytp-ad-skip-button-container button')) {
         if (!visible(button) || Date.now() - (clicked.get(button) || 0) < 1000) continue;
         clicked.set(button, Date.now());
-        if (button.matches('.ytp-skip-ad-button')) finishSeparateAd(player);
-        else button.click();
+        if (!button.matches('.ytp-skip-ad-button')) button.click();
         break;
       }
     }
