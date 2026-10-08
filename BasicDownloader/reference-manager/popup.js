@@ -1,20 +1,39 @@
-import { capturePage } from './capture.js';
-import { normalize, safeUrl } from './model.js';
-import { save } from './db.js';
-const form=document.querySelector('form'), message=document.querySelector('#message'), button=document.querySelector('#save'); let captured={};
-document.querySelector('#library').onclick=()=>chrome.tabs.create({url:chrome.runtime.getURL('library.html')});
-try {
-  const [tab]=await chrome.tabs.query({active:true,currentWindow:true});
-  if (!safeUrl(tab?.url)) throw new Error('일반 웹페이지에서 실행해주세요. PDF는 라이브러리에서 직접 첨부할 수 있습니다.');
-  captured={title:tab.title || tab.url,url:tab.url,kind:'document',accessed:new Date().toISOString().slice(0,10)};
-  try { const result=await chrome.scripting.executeScript({target:{tabId:tab.id},func:capturePage}); captured={...captured,...result[0].result}; message.textContent='내용을 확인하고 저장하세요.'; }
-  catch { message.textContent='이 페이지는 자동 추출이 제한됩니다. 제목·URL을 저장하고 나머지는 직접 입력하세요.'; }
-  for (const [k,v] of Object.entries(captured)) if (form.elements.namedItem(k)) form.elements.namedItem(k).value=v;
-  button.disabled=false;
-} catch(e) { message.textContent=e.message; }
-form.onsubmit=async e=>{
-  e.preventDefault(); button.disabled=true;
-  try { const conflict=await save(normalize({...captured,...Object.fromEntries(new FormData(form))})); message.textContent=conflict?`이미 저장된 자료입니다: ${conflict.title}`:'저장했습니다. 라이브러리에서 PDF와 메모를 추가하세요.'; if(!conflict) form.reset(); }
-  catch(e){message.textContent=`저장 실패: ${e.message}`;}
-  finally {button.disabled=false;}
-};
+import {capturePage} from './capture.js';
+import {safeUrl,duplicate,metadataText} from './model.js';
+import {all,recordActivity,setBibliographyExcluded} from './db.js';
+import {fromTab,classify} from './organizer.js';
+import {inferKind,fillKinds} from './taxonomy.js';
+import {metadataPreview,metadataOrigins,readBibliographyWithFallback} from './bibliography.js';
+import {registrationPossible} from './bibliography-recovery.js';
+import {registrationOrigins} from './bibliography-registries.js';
+import {saveCaptureDraft,loadCaptureDraft,clearCaptureDraft} from './capture-drafts.js';
+import {saveCapture} from './capture-actions.js';
+import {resourceIdentity} from './identity.js';
+const $=s=>document.querySelector(s),form=$('form'),message=$('#message'),sidebar=document.body.classList.contains('sidebar');
+const fields=['title','authors','kind','date','venue','doi','url','pdfUrl','collection','tags'];
+let captured={},sourceTab,windowId,targetId,beforeVersion,working=false,dirty=false,locallyEdited=false,writes=Promise.resolve();
+const transfer=new BroadcastChannel('paperdesk-capture-transfer');
+fillKinds(form.elements.namedItem('kind'));
+function record(){return {...captured,...Object.fromEntries(fields.map(k=>[k,form.elements.namedItem(k).value]))};}
+function doiLink(){const d=form.elements.namedItem('doi').value.trim().replace(/^https?:\/\/(?:dx\.)?doi\.org\//i,'').replace(/^doi:\s*/i,'');$('#doi-link').hidden=!/^10\.\d{4,9}\/\S+$/i.test(d);$('#doi-link').href=$('#doi-link').hidden?'':safeUrl('https://doi.org/'+encodeURIComponent(d).replace(/%2F/gi,'/'));}
+function busy(value){working=value;for(const e of form.elements)e.disabled=value;$('#reload-page').disabled=value;$('#open-sidebar').disabled=value;$('#read-metadata').disabled=value || !sourceTab;$('#save').disabled=value || !captured.title;}
+function render(){for(const k of fields)form.elements.namedItem(k).value=metadataText(captured[k]);doiLink();$('#save').textContent=targetId?'이 자료 바로 보완·저장':'라이브러리에 저장';$('#exclude-label').hidden=!targetId;$('#exclude-capture').checked=!!captured.bibliographyExcluded;$('#source-status').textContent=sourceTab?`작업 중인 탭: ${sourceTab.title || sourceTab.url}`:'현재 탭 불러오기를 눌러 시작하세요.';busy(working);}
+function persist(){if(!sourceTab)return Promise.resolve();const r=record(),draft={sourceTab:{id:sourceTab.id,windowId:sourceTab.windowId,url:sourceTab.url,title:sourceTab.title},record:{...Object.fromEntries(fields.map(k=>[k,r[k]])),references:r.references,metadataStatus:r.metadataStatus,metadataFound:r.metadataFound,bibliography:r.bibliography,bibliographyExcluded:r.bibliographyExcluded},targetId,beforeVersion,dirty};writes=writes.catch(()=>{}).then(()=>saveCaptureDraft(windowId,sourceTab.id,draft));return writes;}
+async function restore(draft){sourceTab=draft.sourceTab;captured=draft.record;targetId=draft.targetId;beforeVersion=draft.beforeVersion;dirty=!!draft.dirty;locallyEdited=false;if(!targetId){const match=duplicate(await all(),captured);if(match){targetId=match.id;beforeVersion=match.updated;captured={...match,...captured,bibliographyExcluded:match.bibliographyExcluded};}}render();message.textContent='작성 중인 내용을 이어서 불러왔습니다. 작업 중인 탭과 내용을 확인하고 저장하세요.';}
+form.addEventListener('input',()=>{dirty=true;locallyEdited=true;doiLink();persist().catch(e=>message.textContent='임시 입력 저장 실패: '+e.message);});
+async function preview(incoming,base){const records=await all(),match=targetId?records.find(r=>r.id===targetId):duplicate(records,{...base,...incoming});const item={record:base,sourceUrl:sourceTab?.url,tabIds:sourceTab?[sourceTab.id]:[],...(match?{targetId:match.id,beforeVersion:match.updated}:{})};if(targetId && match?.updated!==beforeVersion)throw Error('다른 화면에서 자료가 변경되었습니다. 현재 탭 불러오기로 최신 자료를 확인하세요.');const p=metadataPreview(item,incoming,records);if(!p.metadataReady)throw Error(p.reason);captured={...p.record,metadataStatus:incoming.metadataStatus,metadataFound:incoming.metadataFound};targetId=p.targetId;beforeVersion=p.beforeVersion;render();}
+async function loadPage(refresh=false){const [tab]=await chrome.tabs.query({active:true,currentWindow:true});if(tab?.incognito || tab?.pendingUrl || !safeUrl(tab?.url))throw Error('일반 웹페이지의 로딩이 끝난 뒤 실행해주세요.');const candidate=fromTab(tab);if(candidate.excluded)throw Error(candidate.excluded);sourceTab=tab;windowId=tab.windowId;targetId=undefined;beforeVersion=undefined;dirty=false;locallyEdited=false;$('#capture-candidates').replaceChildren();const draft=await loadCaptureDraft(windowId,tab.id);if(draft?.dirty){const current=draft.targetId?(await all()).find(r=>r.id===draft.targetId):undefined;if(!refresh || !draft.targetId || current?.updated===draft.beforeVersion){await restore(draft);return;}await clearCaptureDraft(windowId,tab.id);}
+ let incoming=candidate.record;try{const permitted=!sidebar || await chrome.permissions.contains({origins:[new URL(tab.url).origin+'/*']});if(permitted){const result=await chrome.scripting.executeScript({target:{tabId:tab.id},func:capturePage});incoming={...incoming,...result[0]?.result};}}catch{message.textContent='자동 추출이 제한됩니다. 문서 서지정보 읽기로 등록정보를 조회하거나 직접 입력하세요.';}
+ incoming={...incoming,kind:inferKind(incoming),...classify(incoming)};const existing=duplicate(await all(),incoming);if(existing && !incoming.metadataFound){captured=existing;targetId=existing.id;beforeVersion=existing.updated;render();}else await preview(incoming,candidate.record);await persist();message.textContent=targetId?'이미 저장된 자료입니다. 여기에서 서지정보를 읽거나 수정하고 바로 보완·저장하세요.':'내용을 확인하고 저장하세요. 서지정보 읽기는 DOI·제목 검색으로도 보완합니다.';
+}
+$('#reload-page').onclick=async()=>{try{const permission=sidebar?chrome.permissions.request({permissions:['tabs']}):Promise.resolve(true);busy(true);if(!await permission)throw Error('현재 탭의 제목·주소를 읽는 권한이 필요합니다.');await persist();await loadPage(true);}catch(e){message.textContent=e.message;}finally{busy(false);}};
+function candidates(list,base){const box=$('#capture-candidates');box.replaceChildren();for(const c of list){const p=document.createElement('p');p.textContent=`${c.title} · ${c.authors} · ${c.date} · ${c.doi}`;const choose=document.createElement('button');choose.type='button';choose.className='secondary';choose.textContent='이 후보로 보완안 만들기';choose.onclick=async()=>{if(working)return;busy(true);try{await preview({...c,metadataStatus:'제목 검색 후보 선택 · 검토 필요',url:base.url || c.canonicalUrl || 'https://doi.org/'+c.doi},base);dirty=true;await persist();box.replaceChildren();message.textContent='선택한 후보의 제목·저자·발행일·DOI와 원문을 확인하고 저장하세요.';}catch(e){message.textContent=e.message;}finally{busy(false);}};box.append(p,choose);}}
+$('#read-metadata').onclick=async()=>{if(working || !sourceTab)return;const base=record(),same=resourceIdentity(base.url || sourceTab.url)===resourceIdentity(sourceTab.url),item={record:base,sourceUrl:base.url || sourceTab.url,tabIds:same?[sourceTab.id]:[],tabUrls:same?[sourceTab.url]:[],preferWeb:true},origins=metadataOrigins([item]);if(registrationPossible(base))origins.push(...registrationOrigins(base));try{const permission=chrome.permissions.request({origins:[...new Set(origins)],...(sidebar?{permissions:['tabs']}:{})});busy(true);if(!await permission)throw Error('서지정보 조회 권한이 허용되지 않았습니다. 직접 입력할 수 있습니다.');if(targetId)await recordActivity(targetId,'lookup',{browser:/Edg\//.test(navigator.userAgent)?'Edge':'Chrome'});const incoming=await readBibliographyWithFallback(item);if(incoming.candidates?.length){candidates(incoming.candidates,base);message.textContent='제목 검색 결과의 원문과 DOI를 확인하고 후보를 선택하세요.';return;}await preview(incoming,base);dirty=true;await persist();message.textContent=(incoming.metadataStatus || '서지정보를 확인했습니다.')+' · 확인 후 바로 보완·저장하세요.';}catch(e){message.textContent='서지정보 읽기 실패: '+e.message;}finally{busy(false);}};
+$('#exclude-capture').onchange=async()=>{if(!targetId || working)return;busy(true);try{const current=await setBibliographyExcluded(targetId,$('#exclude-capture').checked);if(!current)throw Error('자료가 삭제되었습니다.');captured.bibliographyExcluded=current.bibliographyExcluded;if(beforeVersion===current.previousUpdated)beforeVersion=current.updated;await persist();message.textContent=current.bibliographyExcluded?'서지 찾기 제외를 저장했습니다. 제외 자료 포함에서 다시 조회할 수 있습니다.':'서지 찾기 제외를 해제했습니다.';}catch(e){message.textContent=e.message;}finally{busy(false);}};
+form.onsubmit=async e=>{e.preventDefault();if(working)return;busy(true);try{const saved=await saveCapture(record(),{targetId,beforeVersion});captured=saved.record;targetId=captured.id;beforeVersion=captured.updated;dirty=false;locallyEdited=false;await writes;await clearCaptureDraft(windowId,sourceTab.id);$('#capture-candidates').replaceChildren();render();message.textContent='저장했습니다. 기존 메모·PDF·읽기 상태·방문 기록을 유지했습니다.';}catch(e){message.textContent='저장 실패: '+e.message;}finally{busy(false);}};
+$('#library').onclick=()=>chrome.tabs.create({url:chrome.runtime.getURL('library.html')});$('#auto-library').onclick=()=>chrome.tabs.create({url:chrome.runtime.getURL('library.html#organize')});
+$('#open-sidebar').hidden=sidebar || !chrome.sidePanel?.open;
+$('#open-sidebar').onclick=async()=>{if(working || !windowId)return;try{const writing=persist(),opening=chrome.sidePanel.open({windowId});await Promise.all([writing,opening]);transfer.postMessage({windowId,tabId:sourceTab.id});message.textContent='사이드바에서 작성 중인 내용을 이어서 확인하세요.';}catch(e){message.textContent='사이드바 열기 실패: '+e.message;}};
+transfer.onmessage=async e=>{if(sidebar && e.data?.windowId===windowId && !working){try{const draft=await loadCaptureDraft(windowId,e.data.tabId);if(draft){if(locallyEdited && sourceTab?.id!==draft.sourceTab.id)await persist();await restore(draft);await persist();}}catch(error){message.textContent='입력 내용을 이어서 불러오지 못했습니다: '+error.message;}}};
+if(sidebar)chrome.tabs.onActivated.addListener(info=>{if(info.windowId===windowId && info.tabId!==sourceTab?.id)$('#source-status').textContent=`작업 중인 탭: ${sourceTab?.title || '없음'} · 다른 탭으로 이동했습니다. 현재 탭 불러오기로 전환하세요.`;});
+busy(true);try{if(sidebar){windowId=(await chrome.windows.getCurrent()).id;const draft=await loadCaptureDraft(windowId);if(draft)await restore(draft);else if(await chrome.permissions.contains({permissions:['tabs']}))await loadPage();else{render();message.textContent='현재 탭 불러오기를 누르면 탭 제목·주소 접근을 요청합니다.';}}else await loadPage();}catch(e){message.textContent=e.message;render();}finally{busy(false);}

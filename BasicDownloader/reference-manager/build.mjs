@@ -1,4 +1,10 @@
-import {mkdir,copyFile} from 'node:fs/promises';
+import {mkdir,copyFile,cp} from 'node:fs/promises';
 const dir=new URL('./dist/',import.meta.url);await mkdir(dir,{recursive:true});
-for(const file of ['manifest.json','model.js','db.js','capture.js','popup.html','popup.js','library.html','library.js','style.css'])await copyFile(new URL(file,import.meta.url),new URL(file,dir));
+for(const file of ['preferences.js','combined-library.js'])await copyFile(new URL(file,import.meta.url),new URL(file,dir));
+await cp(new URL('./icons/',import.meta.url),new URL('icons/',dir),{recursive:true});
+for(const file of ['bibliography-merge.js','bibliography-registries.js','bibliography-tabs.js','bibliography-identifiers.js','capture-drafts.js','capture-actions.js','sidepanel.html','bibliography-state.js','bibliography-recovery.js','manifest.json','references.js','activity.js','activity-ui.js','tracking-settings.js','visit-tracker.js','background.js','model.js','taxonomy.js','relevance.js','identity.js','organizer.js','organizer-ui.js','saved-tabs.js','saved-tabs-ui.js','pdf-matching.js','pdf-reader.js','pdf-ui.js','folder-store.js','folder-settings.js','folder-view.js','folder-ui.js','db.js','capture.js','bibliography.js','popup.html','popup.js','library.html','library.js','style.css'])await copyFile(new URL(file,import.meta.url),new URL(file,dir));
+await mkdir(new URL('vendor/',dir),{recursive:true});
+const vendor=new URL('./node_modules/pdfjs-dist/',import.meta.url);
+for(const [src,dest] of [['legacy/build/pdf.mjs','pdf.mjs'],['legacy/build/pdf.worker.mjs','pdf.worker.mjs'],['LICENSE','LICENSE.pdfjs']])await copyFile(new URL(src,vendor),new URL('vendor/'+dest,dir));
+for(const folder of ['cmaps','standard_fonts'])await cp(new URL(folder+'/',vendor),new URL('vendor/'+folder+'/',dir),{recursive:true});
 console.log('Ready: reference-manager/dist — load this folder as an unpacked extension.');

@@ -1,2 +1,5 @@
 .test-profile/
 preview.png
+review.pdf
+node_modules/
+dist/

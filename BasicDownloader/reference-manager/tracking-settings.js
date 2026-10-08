@@ -1,0 +1,3 @@
+const ready=new Promise((resolve,reject)=>{const req=indexedDB.open('paperdesk-tracking',1);req.onupgradeneeded=()=>req.result.createObjectStore('settings');req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);});
+export async function trackingEnabled(){const db=await ready;return new Promise((resolve,reject)=>{const r=db.transaction('settings').objectStore('settings').get('enabled');r.onsuccess=()=>resolve(r.result===true);r.onerror=()=>reject(r.error);});}
+export async function setTrackingEnabled(enabled){const db=await ready;return new Promise((resolve,reject)=>{const tx=db.transaction('settings','readwrite');tx.objectStore('settings').put(enabled===true,'enabled');tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);});}
